@@ -140,6 +140,35 @@
             z-index: 9999;
         }
 
+        .duck-fall {
+            position: fixed;
+            top: -50px;
+            width: 50px;
+            pointer-events: none;
+            z-index: 0;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+
+            50% {
+                transform: translateY(50vh) translateX(50px);
+            }
+
+            100% {
+                transform: translateY(110vh) translateX(-50px);
+            }
+        }
+
         @media (max-width: 600px) {
             .input-row {
                 flex-direction: column;
@@ -169,6 +198,7 @@
         </div>
 
         <div id="result" class="result-box"></div>
+        <h4>ลากเลขหลายชุด ตัวอย่าง 12 34 56</h4>
     </div>
 
     <script>
@@ -321,6 +351,51 @@
         document.getElementById('allowSpace').addEventListener('change', () => {
             document.getElementById('input').value = '';
         });
+
+        const images = [
+            "https://cdn-icons-png.flaticon.com/512/616/616408.png",
+            "https://cdn-icons-png.flaticon.com/512/616/616430.png",
+            "https://cdn-icons-png.flaticon.com/512/616/616408.png",
+            "https://cdn-icons-png.flaticon.com/512/616/616432.png",
+            "https://cdn-icons-png.flaticon.com/512/616/616434.png"
+        ];
+        let pool = [...images];
+
+        function getRandomImage() {
+            if (pool.length === 0) {
+                pool = [...images]; // รีเซ็ตเมื่อใช้ครบ
+            }
+
+            const index = Math.floor(Math.random() * pool.length);
+            const img = pool[index];
+
+            pool.splice(index, 1); // เอาออก → ไม่ซ้ำ
+
+            return img;
+        }
+        function createDuck() {
+            const duck = document.createElement("img");
+
+            // 🔥 ใช้สุ่มรูปแทน
+            duck.src = getRandomImage();
+            duck.className = "duck-fall";
+
+            duck.style.left = Math.random() * window.innerWidth + "px";
+
+            const size = Math.random() * 30 + 30;
+            duck.style.width = size + "px";
+
+            const duration = Math.random() * 3 + 3;
+            duck.style.animationDuration = duration + "s";
+
+            document.body.appendChild(duck);
+
+            setTimeout(() => {
+                duck.remove();
+            }, duration * 1000);
+        }
+
+        setInterval(createDuck, 500);
     </script>
 </body>
 
