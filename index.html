@@ -253,7 +253,7 @@
             const val = document.getElementById('input').value;
             if (val.length < 3) return alert('ต้องมีอย่างน้อย 3 ตัว');
 
-            const arr = [...new Set(val.split(''))];
+            const arr = val.split('');
 
             const c2 = uniqueCombo(arr, 2);
             const c3 = uniqueCombo(arr, 3);
