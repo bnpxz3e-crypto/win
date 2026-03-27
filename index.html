@@ -147,7 +147,24 @@ function clearForm() {
     document.getElementById('result').innerHTML = '';
     document.getElementById('rootresult').innerHTML = '';
 }
-</script>
 
+document.getElementById('txtdg1').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault(); // กัน form รีเฟรช
+
+        const input = this.value;
+
+        if (input.length === 2) {
+            generateNumbers(); // ชุดลาก
+        } else if (input.length >= 3) {
+            generateAllCombinations(); // วินเลข
+        } else {
+            alert('กรุณากรอกเลข 2 ตัว หรือ 3 ตัวขึ้นไป');
+        }
+    }
+});
+    
+</script>
+    
 </body>
 </html>
