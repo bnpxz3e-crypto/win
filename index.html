@@ -1,1 +1,327 @@
+<!DOCTYPE html>
+<html lang="th">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>วินเลข</title>
+
+    <style>
+        body {
+            font-family: "Prompt", sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #ffffff;
+            color: #000;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgb(253, 0, 0);
+        }
+
+        .input-row {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            /* เอา input ไปกลาง */
+            align-items: center;
+        }
+
+        /* 🔥 input กลางจริง */
+        .input-row input[type="text"],
+        .input-row input {
+            width: 400px;
+            padding: 15px;
+            font-size: 20px;
+            text-align: center;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        /* 🔥 checkbox ลอยไปขวา ไม่เกี่ยวกับ layout */
+        .checkbox-inline {
+            position: absolute;
+            width: 20px;
+            right: 100px;
+            /* ชิดขวา */
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            padding: 0px;
+            border-radius: 2px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .buttons {
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-main {
+            background: #ff0e0e;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .result-inner {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .block {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f4f4f4;
+        }
+
+        .title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .copy {
+            margin-top: 10px;
+            background: #107e06ce;
+            color: #fff;
+        }
+
+        .numbers {
+            word-break: break-word;
+        }
+
+        .num2 {
+            color: #0051ff;
+        }
+
+        .num3 {
+            color: red;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 9999;
+        }
+
+        @media (max-width: 600px) {
+            .input-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>โปรแกรมวินเลข</h1>
+
+        <!-- 🔥 อยู่บรรทัดเดียวกัน -->
+        <div class="input-row">
+            <input id="input" placeholder="กรอกตัวเลข..." oninput="handleInput(this)">
+
+            <label class="checkbox-inline">
+                <input type="checkbox" id="allowSpace">
+                <span>ลากได้ทีละหลายชุด</span>
+            </label>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-main" onclick="generate()">วินเลข</button>
+            <button class="btn-secondary" onclick="run2()">ชุดลาก</button>
+            <button class="btn-danger" onclick="clearAll()">ล้าง</button>
+        </div>
+
+        <div id="result" class="result-box"></div>
+    </div>
+
+    <script>
+
+        let allText = '';
+
+        function uniqueCombo(arr, size) {
+            const result = [];
+            function helper(start, path) {
+                if (path.length === size) {
+                    result.push(path.join(''));
+                    return;
+                }
+                for (let i = start; i < arr.length; i++) {
+                    path.push(arr[i]);
+                    helper(i + 1, path);
+                    path.pop();
+                }
+            }
+            helper(0, []);
+            return result;
+        }
+
+        function comboWithRepeat(arr, size) {
+            const result = [];
+            function helper(start, path) {
+                if (path.length === size) {
+                    result.push(path.join(''));
+                    return;
+                }
+                for (let i = start; i < arr.length; i++) {
+                    path.push(arr[i]);
+                    helper(i, path);
+                    path.pop();
+                }
+            }
+            helper(0, []);
+            return result;
+        }
+
+        function copy(text) {
+            navigator.clipboard.writeText(text);
+            showToast("คัดลอกแล้ว");
+        }
+
+        function copyAll() {
+            if (!allText) return;
+            navigator.clipboard.writeText(allText);
+            showToast("คัดลอกทั้งหมดแล้ว");
+        }
+
+        function showToast(msg) {
+            const noti = document.createElement('div');
+            noti.className = "toast";
+            noti.innerText = msg;
+            document.body.appendChild(noti);
+            setTimeout(() => noti.remove(), 2000);
+        }
+
+        function block(title, data) {
+            const str = data.join('-');
+            const is3 = data[0]?.length === 3;
+
+            return `
+    <div class="block">
+        <div class="title">${title}</div>
+
+        <div class="numbers ${is3 ? 'num3' : 'num2'}">
+            ${str}
+        </div>
+
+        <div style="text-align:center; font-weight:bold;">
+            (รวม ${data.length} ชุด)
+        </div>
+
+        <button class="copy" onclick="copy('${str}')">คัดลอก</button>
+    </div>`;
+        }
+
+        /* วินเลข */
+        function generate() {
+            const val = document.getElementById('input').value;
+            if (val.length < 3) return alert('ต้องมีอย่างน้อย 3 ตัว');
+
+            const arr = [...new Set(val.split(''))];
+
+            const c2 = uniqueCombo(arr, 2);
+            const c3 = uniqueCombo(arr, 3);
+            const c2d = comboWithRepeat(arr, 2);
+            const c3d = comboWithRepeat(arr, 3);
+
+            document.getElementById('result').innerHTML =
+                `<div class="result-inner">
+                ${block('2 ตัว ไม่เบิ้ล', c2)}
+                ${block('3 ตัว ไม่เบิ้ล', c3)}
+                ${block('2 ตัว รวมเบิ้ล', c2d)}
+                ${block('3 ตัว รวมเบิ้ล', c3d)}
+                </div>`;
+
+            allText = [...c2, ...c3, ...c2d, ...c3d].join('-');
+        }
+
+        /* ชุดลากหลายชุด */
+        function run2() {
+            const val = document.getElementById('input').value.trim();
+            const inputs = val.split(/[\s,]+/).filter(n => n.length === 2 && !isNaN(n));
+
+            let html = `<div class="result-inner">`;
+            let all = [];
+
+            inputs.forEach(num => {
+                let out = [];
+                for (let i = 0; i <= 9; i++) out.push(num + i);
+                all.push(...out);
+                html += block(`ชุดลาก ${num}`, out);
+            });
+
+            html += `<button class="copy" onclick="copyAll()">คัดลอกทั้งหมด</button></div>`;
+            allText = all.join('-');
+
+            document.getElementById('result').innerHTML = html;
+        }
+
+        /* ENTER */
+        document.getElementById('input').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+
+                const val = this.value.trim();
+                const allowSpace = document.getElementById('allowSpace').checked;
+
+                if (allowSpace) {
+                    run2();
+                    return;
+                }
+
+                if (val.length === 2) run2();
+                else if (val.length >= 3) generate();
+                else alert('กรุณากรอกเลขอย่างน้อย 2 ตัว');
+            }
+        });
+
+        /* input filter */
+        function handleInput(el) {
+            const allowSpace = document.getElementById('allowSpace').checked;
+            if (allowSpace) el.value = el.value.replace(/[^0-9\s]/g, '');
+            else el.value = el.value.replace(/[^0-9]/g, '');
+        }
+
+        document.getElementById('allowSpace').addEventListener('change', () => {
+            document.getElementById('input').value = '';
+        });
+    </script>
+</body>
+
+</html>
