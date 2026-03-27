@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>โปรแกรมวินเลขจากหน้าไปหลัง</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 30px;
+    background-color: #f4f4f4;
+}
+
+input[type="text"] {
+    width: 300px;
+    height: 50px;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+}
+
+.mbtn {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#result, #rootresult {
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>โปรแกรมวินเลขจากหน้าไปหลัง</h2>
+<p style="color:red;">ป้อนเลขอย่างน้อย 3 ตัว</p>
+
+<input type="text" id="txtdg1" maxlength="30"
+oninput="this.value = this.value.replace(/[^0-9]/g, '')"><br><br>
+
+<label>
+<input type="checkbox" id="excludeDoubles">
+ไม่รวมเบิ้ล
+</label><br><br>
+
+<button class="mbtn" onclick="generateAllCombinations()">วินเลข</button>
+<button class="mbtn" onclick="generateNumbers()">ชุดลาก</button>
+<button class="mbtn" onclick="clearForm()">ล้าง</button>
+
+<div id="result"></div>
+<div id="rootresult"></div>
+
+<script>
+function generateCombinations2(numbers, includeDoubles = false) {
+    const results = [];
+    for (let i = 0; i < numbers.length; i++) {
+        for (let j = i + (includeDoubles ? 0 : 1); j < numbers.length; j++) {
+            results.push(numbers[i] + '' + numbers[j]);
+        }
+    }
+    return results;
+}
+
+function generateCombinations3(numbers) {
+    const results = [];
+    for (let i = 0; i < numbers.length - 2; i++) {
+        for (let j = i + 1; j < numbers.length - 1; j++) {
+            for (let k = j + 1; k < numbers.length; k++) {
+                results.push(numbers[i] + '' + numbers[j] + '' + numbers[k]);
+            }
+        }
+    }
+    return results;
+}
+
+function generateCombinations3WithDoubles(numbers) {
+    const results = [];
+    for (let i = 0; i < numbers.length; i++) {
+        for (let j = i; j < numbers.length; j++) {
+            for (let k = j; k < numbers.length; k++) {
+                results.push(numbers[i] + '' + numbers[j] + '' + numbers[k]);
+            }
+        }
+    }
+    return results;
+}
+
+function generateAllCombinations() {
+    const numbers = document.getElementById('txtdg1').value.split('');
+    const excludeDoubles = document.getElementById('excludeDoubles').checked;
+
+    if (numbers.length < 3) {
+        alert("กรอกอย่างน้อย 3 ตัว");
+        return;
+    }
+
+    const c2 = generateCombinations2(numbers);
+    const c3 = generateCombinations3(numbers);
+    const c2d = generateCombinations2(numbers, true);
+    const c3d = generateCombinations3WithDoubles(numbers);
+
+    let html = "";
+
+    if (excludeDoubles) {
+        html = `
+        <h3>3 ตัว (ไม่เบิ้ล)</h3>${c3.join('-')}<br><br>
+        <h3>2 ตัว (ไม่เบิ้ล)</h3>${c2.join('-')}
+        `;
+    } else {
+        html = `
+        <h3>3 ตัว</h3>${c3.join('-')}<br><br>
+        <h3>2 ตัว</h3>${c2.join('-')}<br><br>
+        <h3>3 ตัว (รวมเบิ้ล)</h3>${c3d.join('-')}<br><br>
+        <h3>2 ตัว (รวมเบิ้ล)</h3>${c2d.join('-')}
+        `;
+    }
+
+    document.getElementById('result').innerHTML = html;
+    document.getElementById('rootresult').innerHTML = '';
+}
+
+function generateNumbers() {
+    let prefix = document.getElementById("txtdg1").value;
+
+    if (prefix.length !== 2) {
+        alert("กรอก 2 ตัวเท่านั้น");
+        return;
+    }
+
+    let result = '';
+    for (let i = 0; i <= 9; i++) {
+        result += prefix + i + '<br>';
+    }
+
+    document.getElementById("rootresult").innerHTML = result;
+    document.getElementById("result").innerHTML = '';
+}
+
+function clearForm() {
+    document.getElementById('txtdg1').value = '';
+    document.getElementById('result').innerHTML = '';
+    document.getElementById('rootresult').innerHTML = '';
+}
+</script>
+
+</body>
+</html>
