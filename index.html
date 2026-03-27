@@ -187,6 +187,22 @@ function clearAll() {
     document.getElementById('input').value='';
     document.getElementById('result').innerHTML='';
 }
+
+    document.getElementById('input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+
+        const val = this.value;
+
+        if (val.length === 2) {
+            run2();
+        } else if (val.length >= 3) {
+            generate();
+        } else {
+            alert('กรุณากรอกเลขอย่างน้อย 2 ตัว');
+        }
+    }
+});
 </script>
 </body>
 </html>
