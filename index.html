@@ -158,6 +158,35 @@
             background: rgba(173, 216, 230, 0.8);
         }
 
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #ffffff30;
+            border-top: 6px solid #00eaff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            box-shadow: 0 0 20px #00eaff;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         @keyframes rain {
             to {
                 transform: translateY(110vh) translateX(-20px);
@@ -276,46 +305,61 @@
 
         /* วินเลข */
         function generate() {
-            const val = document.getElementById('input').value;
-            if (val.length < 3) return alert('ต้องมีอย่างน้อย 3 ตัว');
+            showLoader();
 
-            const arr = val.split('');
+            setTimeout(() => {
+                const val = document.getElementById('input').value;
+                if (val.length < 3) {
+                    hideLoader();
+                    return alert('ต้องมีอย่างน้อย 3 ตัว');
+                }
 
-            const c2 = uniqueCombo(arr, 2);
-            const c3 = uniqueCombo(arr, 3);
-            const c2d = comboWithRepeat(arr, 2);
-            const c3d = comboWithRepeat(arr, 3);
+                const arr = val.split('');
 
-            document.getElementById('result').innerHTML =
-                `<div class="result-inner">
-                ${block('2 ตัว ไม่เบิ้ล', c2)}
-                ${block('3 ตัว ไม่เบิ้ล', c3)}
-                ${block('2 ตัว รวมเบิ้ล', c2d)}
-                ${block('3 ตัว รวมเบิ้ล', c3d)}
-                </div>`;
+                const c2 = uniqueCombo(arr, 2);
+                const c3 = uniqueCombo(arr, 3);
+                const c2d = comboWithRepeat(arr, 2);
+                const c3d = comboWithRepeat(arr, 3);
 
-            allText = [...c2, ...c3, ...c2d, ...c3d].join('-');
+                document.getElementById('result').innerHTML =
+                    `<div class="result-inner">
+            ${block('2 ตัว ไม่เบิ้ล', c2)}
+            ${block('3 ตัว ไม่เบิ้ล', c3)}
+            ${block('2 ตัว รวมเบิ้ล', c2d)}
+            ${block('3 ตัว รวมเบิ้ล', c3d)}
+            </div>`;
+
+                allText = [...c2, ...c3, ...c2d, ...c3d].join('-');
+
+                hideLoader();
+            }, 300);
         }
 
         /* ชุดลากหลายชุด */
         function run2() {
-            const val = document.getElementById('input').value.trim();
-            const inputs = val.split(/[\s,]+/).filter(n => n.length === 2 && !isNaN(n));
+            showLoader();
 
-            let html = `<div class="result-inner">`;
-            let all = [];
+            setTimeout(() => {
+                const val = document.getElementById('input').value.trim();
+                const inputs = val.split(/[\s,]+/).filter(n => n.length === 2 && !isNaN(n));
 
-            inputs.forEach(num => {
-                let out = [];
-                for (let i = 0; i <= 9; i++) out.push(num + i);
-                all.push(...out);
-                html += block(`ชุดลาก ${num}`, out);
-            });
+                let html = `<div class="result-inner">`;
+                let all = [];
 
-            html += `<button class="copy" onclick="copyAll()">คัดลอกทั้งหมด</button></div>`;
-            allText = all.join('-');
+                inputs.forEach(num => {
+                    let out = [];
+                    for (let i = 0; i <= 9; i++) out.push(num + i);
+                    all.push(...out);
+                    html += block(`ชุดลาก ${num}`, out);
+                });
 
-            document.getElementById('result').innerHTML = html;
+                html += `<button class="copy" onclick="copyAll()">คัดลอกทั้งหมด</button></div>`;
+                allText = all.join('-');
+
+                document.getElementById('result').innerHTML = html;
+
+                hideLoader();
+            }, 300);
         }
 
         /* ENTER */
@@ -372,7 +416,30 @@
 
         // ปรับความถี่ฝน
         setInterval(createRain, 40);
-        
+
+        function showLoader() {
+            // ล้างผลลัพธ์เก่าทันที
+            document.getElementById('result').innerHTML = '';
+
+            const loader = document.createElement('div');
+            loader.className = 'loader';
+            loader.id = 'loader';
+            loader.innerHTML = `<div class="spinner"></div>`;
+            document.body.appendChild(loader);
+        }
+
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            if (loader) loader.remove();
+        }
+
+        /* ✅ ปุ่มล้าง */
+        function clearAll() {
+            document.getElementById('input').value = '';
+            document.getElementById('result').innerHTML = '';
+            allText = '';
+        }
+
     </script>
 </body>
 
