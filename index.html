@@ -583,7 +583,7 @@
         }
 
         const sets = raw
-          .split(/[\s,]+/)
+          .split(/[\s,\-]+/)
           .map(s => s.replace(/\D/g, ''))
           .filter(s => s.length >= 3);
 
@@ -708,6 +708,12 @@
       document.getElementById('multiInput').value = '';
       document.getElementById('multiResult').innerHTML = '';
     }
+
+    document.getElementById('multiInput').addEventListener('input', function () {
+      this.value = this.value
+        .replace(/[^\d\s,\-]/g, '')
+        .replace(/-/g, '\n');
+    });
   </script>
 </body>
 
