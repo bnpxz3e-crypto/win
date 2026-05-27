@@ -145,6 +145,11 @@
       color: #fff;
     }
 
+    .btn-show {
+      background: #6f42c1;
+      color: #fff;
+    }
+
     .result-box {
       margin-top: 20px;
       display: flex;
@@ -163,6 +168,12 @@
       background: #f4f4f4;
       color: #000;
       text-align: center;
+    }
+
+    .preset-block {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .title {
@@ -188,6 +199,17 @@
     .numbers {
       word-break: break-word;
       line-height: 1.7;
+    }
+
+    .preset-numbers {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px dashed #94a3b8;
+      max-height: 260px;
+      overflow-y: auto;
     }
 
     .num2 {
@@ -306,6 +328,7 @@
     <div class="tabs">
       <button class="tab-btn active" id="tab-normal" onclick="showPage('normal')">🎯 วินปกติ</button>
       <button class="tab-btn" id="tab-multi" onclick="showPage('multi')">🔢 วินหลายชุด</button>
+      <button class="tab-btn" id="tab-preset" onclick="showPage('preset')">📦 ชุด</button>
     </div>
 
     <!-- หน้า 1 วินปกติ -->
@@ -349,11 +372,23 @@
 
       <div id="multiResult" class="result-box"></div>
     </div>
+
+    <!-- หน้า 3 ชุดสำเร็จ -->
+    <div class="page" id="page-preset">
+      <h1>ชุดสำเร็จ</h1>
+
+      <div class="hint">
+        เลขแต่ละชุดจะซ่อนไว้ก่อน กด “แสดงเลข” เพื่อดู หรือกด “คัดลอก” เพื่อคัดลอกทันที
+      </div>
+
+      <div id="presetResult" class="result-box"></div>
+    </div>
   </div>
 
   <script>
     let allText = '';
     window.multiCopyData = {};
+    window.presetCopyData = {};
 
     function uniqueCombo(arr, size) {
       const result = [];
@@ -395,6 +430,10 @@
 
       document.getElementById('page-' + page).classList.add('active');
       document.getElementById('tab-' + page).classList.add('active');
+
+      if (page === 'preset') {
+        renderPresetSets();
+      }
     }
 
     function copy(text) {
@@ -440,6 +479,10 @@
 
     function copyMulti(key) {
       copy(window.multiCopyData[key] || '');
+    }
+
+    function copyPreset(key) {
+      copy(window.presetCopyData[key] || '');
     }
 
     function showToast(msg) {
@@ -623,6 +666,152 @@
       }, 300);
     }
 
+    function textToArray(text) {
+      return text.trim().split(/\s+/).filter(Boolean);
+    }
+
+    const presetSets = {
+      running: {
+        title: 'เรียง',
+        type: 'num3',
+        data: textToArray(`
+          012 123 234 345 456 567 678 789 890 901
+        `)
+      },
+
+      sibling: {
+        title: 'พี่น้อง',
+        type: 'num2',
+        data: textToArray(`
+          01 12 23 34 45 56 67 78 89 90
+        `)
+      },
+
+      triple: {
+        title: 'ตอง',
+        type: 'num3',
+        data: textToArray(`
+          000 111 222 333 444 555 666 777 888 999
+        `)
+      },
+
+      doubleBack: {
+        title: 'เบิ้ลหลัง',
+        type: 'num3',
+        data: textToArray(`
+          100 211 122 133 144 155 166 177 188 199
+          200 311 322 233 244 255 266 277 288 299
+          300 411 422 433 344 355 366 377 388 399
+          400 511 522 533 544 455 466 477 488 499
+          500 611 622 633 644 655 566 577 588 599
+          600 711 722 733 744 755 766 677 688 699
+          700 811 822 833 844 855 866 877 788 799
+          800 911 922 933 944 955 966 977 988 899
+          900 011 022 033 044 055 066 077 088 099
+        `)
+      },
+
+      doubleFront: {
+        title: 'เบิ้ลหน้า',
+        type: 'num3',
+        data: textToArray(`
+          001 002 003 004 005 006 007 008 009
+          112 113 114 115 116 117 118 119 110
+          221 223 224 225 226 227 228 229 220
+          331 332 334 335 336 337 338 339 330
+          441 442 443 445 446 448 447 449 440
+          551 552 553 554 556 557 558 559 550
+          661 662 663 664 665 667 668 669 660
+          771 772 773 774 775 776 778 779 770
+          881 882 883 884 885 886 887 889 880
+          991 992 993 994 995 996 997 998 990
+        `)
+      },
+
+      ham: {
+        title: 'หาม',
+        type: 'num3',
+        data: textToArray(`
+          010 121 212 313 414 515 616 717 818 919
+          020 131 232 323 424 525 626 727 828 929
+          030 141 242 343 434 535 636 737 838 939
+          040 151 252 353 454 545 646 747 848 949
+          050 161 262 363 464 565 656 757 858 959
+          060 171 272 373 474 575 676 767 868 969
+          070 181 282 383 484 585 686 787 878 979
+          080 191 292 393 494 595 696 797 898 989
+          090 101 202 303 404 505 606 707 808 909
+        `)
+      }
+    };
+
+    function getExecutionSet() {
+      return [
+        ...presetSets.doubleBack.data,
+        ...presetSets.doubleFront.data,
+        ...presetSets.ham.data
+      ];
+    }
+
+    function presetBlock(key, title, data, type) {
+      const text = data.join('-');
+      window.presetCopyData[key] = text;
+
+      return `
+        <div class="block preset-block">
+          <div class="title">${title}</div>
+
+          <div class="count-text">
+            (รวม ${data.length} ชุด)
+          </div>
+
+          <button class="btn-show" id="btn_${key}" onclick="togglePreset('${key}')">แสดงเลข</button>
+          <button class="copy" onclick="copyPreset('${key}')">คัดลอก</button>
+
+          <div id="box_${key}" class="numbers preset-numbers ${type}">
+            ${text}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPresetSets() {
+      const presetResult = document.getElementById('presetResult');
+
+      const execution = getExecutionSet();
+
+      let html = `<div class="result-inner">`;
+
+      html += presetBlock('preset_running', presetSets.running.title, presetSets.running.data, presetSets.running.type);
+      html += presetBlock('preset_sibling', presetSets.sibling.title, presetSets.sibling.data, presetSets.sibling.type);
+      html += presetBlock('preset_triple', presetSets.triple.title, presetSets.triple.data, presetSets.triple.type);
+      html += presetBlock('preset_doubleBack', presetSets.doubleBack.title, presetSets.doubleBack.data, presetSets.doubleBack.type);
+      html += presetBlock('preset_doubleFront', presetSets.doubleFront.title, presetSets.doubleFront.data, presetSets.doubleFront.type);
+      html += presetBlock('preset_ham', presetSets.ham.title, presetSets.ham.data, presetSets.ham.type);
+      html += presetBlock('preset_execution', 'ชุดประหาร', execution, 'num3');
+
+      html += `</div>`;
+
+      presetResult.innerHTML = html;
+    }
+
+    function togglePreset(key) {
+      const box = document.getElementById('box_' + key);
+      const btn = document.getElementById('btn_' + key);
+
+      if (!box || !btn) return;
+
+      const isHidden = box.style.display === '' || box.style.display === 'none';
+
+      if (isHidden) {
+        box.style.display = 'block';
+        btn.innerText = 'ซ่อนเลข';
+      } else {
+        box.style.display = 'none';
+        btn.innerText = 'แสดงเลข';
+      }
+    }
+
     document.getElementById('input').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -714,6 +903,8 @@
         .replace(/[^\d\s,\-]/g, '')
         .replace(/-/g, '\n');
     });
+
+    renderPresetSets();
   </script>
 </body>
 
