@@ -65,18 +65,32 @@
       display: block;
     }
 
+    .normal-top-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .main-input-zone {
+      flex: 1;
+      max-width: 600px;
+    }
+
     .input-row {
       position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
+      gap: 12px;
       margin-top: 12px;
     }
 
     .input-row input[type="text"],
     .input-row input {
       width: 400px;
-      max-width: 100%;
+      max-width: calc(100% - 150px);
       padding: 15px;
       font-size: 20px;
       text-align: center;
@@ -85,16 +99,23 @@
     }
 
     .checkbox-inline {
-      position: absolute;
-      width: 20px;
-      right: 100px;
+      position: static;
+      width: auto;
       display: flex;
       align-items: center;
+      gap: 4px;
       font-size: 14px;
       padding: 0px;
       border-radius: 2px;
       cursor: pointer;
       white-space: nowrap;
+    }
+
+    .checkbox-inline input {
+      width: auto !important;
+      max-width: none !important;
+      padding: 0 !important;
+      margin: 0;
     }
 
     textarea {
@@ -299,6 +320,92 @@
       box-shadow: 0 0 20px #00eaff;
     }
 
+    /* กล่องคำนวณเลขแบบลอยด้านซ้าย */
+    .floating-calc-box {
+      position: fixed;
+      left: 0;
+      top: 135px;
+      z-index: 9998;
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: stretch;
+    }
+
+    .floating-calc-toggle {
+      width: 42px;
+      min-height: 54px;
+      margin: 0;
+      padding: 0;
+      border-radius: 0 14px 14px 0;
+      background: #dc2626;
+      color: #ffffff;
+      box-shadow: 0 0 25px rgba(220, 38, 38, 0.9);
+      font-size: 20px;
+    }
+
+    .floating-calc-content {
+      width: 200px;
+      background: #ffffff;
+      border-right: 2px solid #dc2626;
+      border-top: 2px solid #dc2626;
+      border-bottom: 2px solid #dc2626;
+      border-radius: 0 14px 14px 0;
+      padding: 10px;
+      color: #111827;
+      box-shadow: 0 0 30px rgba(220, 38, 38, 0.65);
+      text-align: center;
+    }
+
+    .floating-calc-box.closed .floating-calc-content {
+      display: none;
+    }
+
+    .mini-calc-title {
+      font-weight: bold;
+      color: #dc2626;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .mini-calc-input {
+      width: 100%;
+      padding: 9px 8px;
+      border-radius: 8px;
+      border: 1.5px solid #d1d5db;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      box-sizing: border-box;
+    }
+
+    .mini-calc-formula {
+      margin-top: 8px;
+      min-height: 45px;
+      padding: 9px;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px dashed #94a3b8;
+      font-size: 14px;
+      font-weight: bold;
+      word-break: break-word;
+      line-height: 1.4;
+    }
+
+    .mini-calc-formula.placeholder {
+      color: rgba(0, 0, 0, 0.45);
+    }
+
+    .mini-calc-formula.answer {
+      color: #b91c1c;
+    }
+
+    .mini-copy-btn {
+      width: 100%;
+      margin: 8px 0 0;
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
     @keyframes spin {
       to {
         transform: rotate(360deg);
@@ -320,8 +427,18 @@
         padding: 15px;
       }
 
+      .normal-top-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .main-input-zone {
+        max-width: 100%;
+      }
+
       .input-row {
         flex-direction: column;
+        gap: 8px;
       }
 
       .checkbox-inline {
@@ -334,6 +451,12 @@
       .input-row input[type="text"],
       .input-row input {
         width: 100%;
+        max-width: 100%;
+      }
+
+      .checkbox-inline input {
+        width: auto !important;
+        max-width: none !important;
       }
 
       textarea {
@@ -347,6 +470,21 @@
 
       .tab-btn {
         flex: 1;
+      }
+
+      .floating-calc-box {
+        top: auto;
+        bottom: 18px;
+        left: 0;
+        right: auto;
+      }
+
+      .floating-calc-content {
+        width: 190px;
+      }
+
+      .floating-calc-toggle {
+        width: 40px;
       }
     }
   </style>
@@ -364,23 +502,28 @@
     <div class="page active" id="page-normal">
       <h1>โปรแกรมวินเลข</h1>
 
-      <div class="input-row">
-        <input id="input" placeholder="กรอกตัวเลข..." oninput="handleInput(this)">
+      <div class="normal-top-row">
+        <div class="main-input-zone">
+          <div class="input-row">
+            <input id="input" placeholder="กรอกตัวเลข..." oninput="handleInput(this)">
 
-        <label class="checkbox-inline">
-          <input type="checkbox" id="allowSpace">
-          <span>ลากได้ทีละหลายชุด</span>
-        </label>
-      </div>
+            <label class="checkbox-inline">
+              <input type="checkbox" id="allowSpace">
+              <span>ลากได้ทีละหลายชุด</span>
+            </label>
+          </div>
 
-      <div class="buttons">
-        <button class="btn-main" onclick="generate()">วินเลข</button>
-        <button class="btn-secondary" onclick="run2()">ชุดลาก</button>
-        <button class="btn-danger" onclick="clearAll()">ล้าง</button>
+          <div class="buttons">
+            <button class="btn-main" onclick="generate()">วินเลข</button>
+            <button class="btn-secondary" onclick="run2()">ชุดลาก</button>
+            <button class="btn-danger" onclick="clearAll()">ล้าง</button>
+          </div>
+
+          <h4>ลากเลขหลายชุด ตัวอย่าง 12 34 56</h4>
+        </div>
       </div>
 
       <div id="result" class="result-box"></div>
-      <h4>ลากเลขหลายชุด ตัวอย่าง 12 34 56</h4>
     </div>
 
     <!-- หน้า 2 วินหลายชุด -->
@@ -414,41 +557,72 @@
     </div>
   </div>
 
+  <!-- กล่องคำนวณเลขลอยด้านซ้าย -->
+  <div class="floating-calc-box" id="floatingCalcBox">
+    <button class="floating-calc-toggle" onclick="toggleFloatingCalc()">🧮</button>
+
+    <div class="floating-calc-content" id="floatingCalcContent">
+      <div class="mini-calc-title">คำนวณเลข</div>
+
+      <input
+        id="miniCalcInput"
+        class="mini-calc-input"
+        placeholder="เช่น 1+1 หรือ 1+1-2"
+      >
+
+      <div id="miniCalcFormula" class="mini-calc-formula placeholder">
+        กรอกเช่น 1+1 หรือ 1+1-2
+      </div>
+
+      <button class="copy mini-copy-btn" onclick="copyMiniCalc()">
+        คัดลอก
+      </button>
+    </div>
+  </div>
+
   <script>
     let allText = '';
+    let miniCalcText = '';
+
     window.multiCopyData = {};
     window.presetCopyData = {};
 
     function uniqueCombo(arr, size) {
       const result = [];
+
       function helper(start, path) {
         if (path.length === size) {
           result.push(path.join(''));
           return;
         }
+
         for (let i = start; i < arr.length; i++) {
           path.push(arr[i]);
           helper(i + 1, path);
           path.pop();
         }
       }
+
       helper(0, []);
       return result;
     }
 
     function comboWithRepeat(arr, size) {
       const result = [];
+
       function helper(start, path) {
         if (path.length === size) {
           result.push(path.join(''));
           return;
         }
+
         for (let i = start; i < arr.length; i++) {
           path.push(arr[i]);
           helper(i, path);
           path.pop();
         }
       }
+
       helper(0, []);
       return result;
     }
@@ -519,62 +693,66 @@
       noti.className = "toast";
       noti.innerText = msg;
       document.body.appendChild(noti);
-      setTimeout(() => noti.remove(), 2000);
+
+      setTimeout(() => {
+        noti.remove();
+      }, 2000);
     }
 
     function block(title, data) {
       const str = data.join('-');
       const is3 = data[0]?.length === 3;
       const key = 'normal_' + Math.random().toString(36).slice(2);
+
       window.multiCopyData[key] = str;
 
       return `
-      <div class="block">
-        <div class="title">${title}</div>
+        <div class="block">
+          <div class="title">${title}</div>
 
-        <div class="numbers ${is3 ? 'num3' : 'num2'}">
-          ${str}
+          <div class="numbers ${is3 ? 'num3' : 'num2'}">
+            ${str}
+          </div>
+
+          <div class="count-text">
+            (รวม ${data.length} ชุด)
+          </div>
+
+          <button class="copy" onclick="copyMulti('${key}')">คัดลอก</button>
         </div>
-
-        <div class="count-text">
-          (รวม ${data.length} ชุด)
-        </div>
-
-        <button class="copy" onclick="copyMulti('${key}')">คัดลอก</button>
-      </div>
-    `;
+      `;
     }
 
     function multiBlock(title, items, copyId) {
       let copyText = [];
 
       let html = `
-      <div class="block">
-        <div class="title">${title}</div>
-    `;
+        <div class="block">
+          <div class="title">${title}</div>
+      `;
 
       items.forEach(item => {
         copyText.push(item.text);
 
         html += `
-        <div class="sub-title">ชุดของ ${item.source}</div>
+          <div class="sub-title">ชุดของ ${item.source}</div>
 
-        <div class="numbers ${item.is3 ? 'num3' : 'num2'}">
-          ${item.text}
-        </div>
+          <div class="numbers ${item.is3 ? 'num3' : 'num2'}">
+            ${item.text}
+          </div>
 
-        <div class="count-text">
-          (รวม ${item.count} ชุด)
-        </div>
-      `;
+          <div class="count-text">
+            (รวม ${item.count} ชุด)
+          </div>
+        `;
       });
 
       window.multiCopyData[copyId] = copyText.join('\n');
 
       html += `
-        <button class="copy" onclick="copyMulti('${copyId}')">คัดลอก</button>
-      </div>
-    `;
+          <button class="copy" onclick="copyMulti('${copyId}')">คัดลอก</button>
+        </div>
+      `;
 
       return html;
     }
@@ -599,11 +777,11 @@
 
         document.getElementById('result').innerHTML =
           `<div class="result-inner">
-          ${block('2 ตัว ไม่เบิ้ล', c2)}
-          ${block('3 ตัว ไม่เบิ้ล', c3)}
-          ${block('2 ตัว รวมเบิ้ล', c2d)}
-          ${block('3 ตัว รวมเบิ้ล', c3d)}
-        </div>`;
+            ${block('2 ตัว ไม่เบิ้ล', c2)}
+            ${block('3 ตัว ไม่เบิ้ล', c3)}
+            ${block('2 ตัว รวมเบิ้ล', c2d)}
+            ${block('3 ตัว รวมเบิ้ล', c3d)}
+          </div>`;
 
         allText = [...c2, ...c3, ...c2d, ...c3d].join('-');
 
@@ -628,13 +806,17 @@
 
         inputs.forEach(num => {
           let out = [];
-          for (let i = 0; i <= 9; i++) out.push(num + i);
+
+          for (let i = 0; i <= 9; i++) {
+            out.push(num + i);
+          }
 
           all.push(...out);
           html += block(`ชุดลาก ${num}`, out);
         });
 
         html += `<button class="copy" onclick="copyAll()">คัดลอกทั้งหมด</button></div>`;
+
         allText = all.join('-');
 
         document.getElementById('result').innerHTML = html;
@@ -677,19 +859,42 @@
           const c2d = comboWithRepeat(arr, 2);
           const c3d = comboWithRepeat(arr, 3);
 
-          twoNoDouble.push({ source: set, text: c2.join('-'), count: c2.length, is3: false });
-          threeNoDouble.push({ source: set, text: c3.join('-'), count: c3.length, is3: true });
-          twoWithDouble.push({ source: set, text: c2d.join('-'), count: c2d.length, is3: false });
-          threeWithDouble.push({ source: set, text: c3d.join('-'), count: c3d.length, is3: true });
+          twoNoDouble.push({
+            source: set,
+            text: c2.join('-'),
+            count: c2.length,
+            is3: false
+          });
+
+          threeNoDouble.push({
+            source: set,
+            text: c3.join('-'),
+            count: c3.length,
+            is3: true
+          });
+
+          twoWithDouble.push({
+            source: set,
+            text: c2d.join('-'),
+            count: c2d.length,
+            is3: false
+          });
+
+          threeWithDouble.push({
+            source: set,
+            text: c3d.join('-'),
+            count: c3d.length,
+            is3: true
+          });
         });
 
         document.getElementById('multiResult').innerHTML =
           `<div class="result-inner">
-          ${multiBlock('2 ตัว ไม่เบิ้ล', twoNoDouble, 'twoNoDouble')}
-          ${multiBlock('3 ตัว ไม่เบิ้ล', threeNoDouble, 'threeNoDouble')}
-          ${multiBlock('2 ตัว รวมเบิ้ล', twoWithDouble, 'twoWithDouble')}
-          ${multiBlock('3 ตัว รวมเบิ้ล', threeWithDouble, 'threeWithDouble')}
-        </div>`;
+            ${multiBlock('2 ตัว ไม่เบิ้ล', twoNoDouble, 'twoNoDouble')}
+            ${multiBlock('3 ตัว ไม่เบิ้ล', threeNoDouble, 'threeNoDouble')}
+            ${multiBlock('2 ตัว รวมเบิ้ล', twoWithDouble, 'twoWithDouble')}
+            ${multiBlock('3 ตัว รวมเบิ้ล', threeWithDouble, 'threeWithDouble')}
+          </div>`;
 
         hideLoader();
       }, 300);
@@ -830,6 +1035,7 @@
 
     function presetBlock(key, title, data, type) {
       const text = data.join('-');
+
       window.presetCopyData[key] = text;
 
       return `
@@ -890,6 +1096,16 @@
       }
     }
 
+    function handleInput(el) {
+      const allowSpace = document.getElementById('allowSpace').checked;
+
+      if (allowSpace) {
+        el.value = el.value.replace(/[^0-9\s]/g, '');
+      } else {
+        el.value = el.value.replace(/[^0-9]/g, '');
+      }
+    }
+
     document.getElementById('input').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -897,10 +1113,15 @@
         const val = this.value.trim();
         const allowSpace = document.getElementById('allowSpace').checked;
 
-        if (allowSpace) run2();
-        else if (val.length === 2) run2();
-        else if (val.length >= 3) generate();
-        else alert('กรุณากรอกเลขอย่างน้อย 2 ตัว');
+        if (allowSpace) {
+          run2();
+        } else if (val.length === 2) {
+          run2();
+        } else if (val.length >= 3) {
+          generate();
+        } else {
+          alert('กรุณากรอกเลขอย่างน้อย 2 ตัว');
+        }
       }
     });
 
@@ -911,14 +1132,122 @@
       }
     });
 
-    function handleInput(el) {
-      const allowSpace = document.getElementById('allowSpace').checked;
-      if (allowSpace) el.value = el.value.replace(/[^0-9\s]/g, '');
-      else el.value = el.value.replace(/[^0-9]/g, '');
-    }
-
     document.getElementById('allowSpace').addEventListener('change', () => {
       document.getElementById('input').value = '';
+    });
+
+    document.getElementById('multiInput').addEventListener('input', function () {
+      this.value = this.value
+        .replace(/[^\d\s,\-]/g, '')
+        .replace(/-/g, '\n');
+    });
+
+    /* ระบบคำนวณเลขลอยด้านซ้าย */
+    function toggleFloatingCalc() {
+      const box = document.getElementById('floatingCalcBox');
+
+      if (!box) return;
+
+      box.classList.toggle('closed');
+    }
+
+    function calculateMiniFormula(raw) {
+      raw = raw.trim().replace(/\s+/g, '');
+
+      if (!raw) return '';
+
+      if (!/^[0-9+\-]+$/.test(raw)) {
+        return '';
+      }
+
+      if (/^[+\-]/.test(raw)) {
+        return '';
+      }
+
+      if (/[+\-]$/.test(raw)) {
+        return '';
+      }
+
+      if (/[+\-]{2,}/.test(raw)) {
+        return '';
+      }
+
+      const parts = raw.match(/\d+|[+\-]/g);
+
+      if (!parts || parts.length === 0) {
+        return '';
+      }
+
+      let total = parseInt(parts[0], 10);
+
+      for (let i = 1; i < parts.length; i += 2) {
+        const operator = parts[i];
+        const number = parseInt(parts[i + 1], 10);
+
+        if (Number.isNaN(number)) {
+          return '';
+        }
+
+        if (operator === '+') {
+          total += number;
+        } else if (operator === '-') {
+          total -= number;
+        }
+      }
+
+      return `${raw}=*${total}*`;
+    }
+
+    function updateMiniCalc() {
+      const input = document.getElementById('miniCalcInput');
+      const result = document.getElementById('miniCalcFormula');
+
+      if (!input || !result) return;
+
+      const raw = input.value.trim();
+      const formula = calculateMiniFormula(raw);
+
+      if (!raw) {
+        miniCalcText = '';
+        result.classList.remove('answer');
+        result.classList.add('placeholder');
+        result.innerText = 'กรอกเช่น 1+1 หรือ 1+1-2';
+        return;
+      }
+
+      if (!formula) {
+        miniCalcText = '';
+        result.classList.remove('answer');
+        result.classList.remove('placeholder');
+        result.innerText = '';
+        return;
+      }
+
+      miniCalcText = formula;
+      result.classList.remove('placeholder');
+      result.classList.add('answer');
+      result.innerText = formula;
+    }
+
+    function copyMiniCalc() {
+      if (!miniCalcText) {
+        return alert('ยังไม่มีสูตรให้คัดลอก');
+      }
+
+      copy(miniCalcText);
+    }
+
+    document.getElementById('miniCalcInput').addEventListener('input', updateMiniCalc);
+
+    document.getElementById('miniCalcInput').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+
+        if (miniCalcText) {
+          this.value = miniCalcText;
+          updateMiniCalc();
+        }
+      }
     });
 
     function createRain() {
@@ -951,18 +1280,25 @@
       }
 
       const oldLoader = document.getElementById('loader');
-      if (oldLoader) oldLoader.remove();
+
+      if (oldLoader) {
+        oldLoader.remove();
+      }
 
       const loader = document.createElement('div');
       loader.className = 'loader';
       loader.id = 'loader';
       loader.innerHTML = `<div class="spinner"></div>`;
+
       document.body.appendChild(loader);
     }
 
     function hideLoader() {
       const loader = document.getElementById('loader');
-      if (loader) loader.remove();
+
+      if (loader) {
+        loader.remove();
+      }
     }
 
     function clearAll() {
@@ -975,12 +1311,6 @@
       document.getElementById('multiInput').value = '';
       document.getElementById('multiResult').innerHTML = '';
     }
-
-    document.getElementById('multiInput').addEventListener('input', function () {
-      this.value = this.value
-        .replace(/[^\d\s,\-]/g, '')
-        .replace(/-/g, '\n');
-    });
 
     renderPresetSets();
   </script>
