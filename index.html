@@ -2870,6 +2870,243 @@
     let currentProfile = null;
     let adminProfilesCache = new Map();
 
+    // ========================================
+    // SINGLE ACTIVE SESSION
+    // 1 บัญชี ใช้งานได้ทีละ 1 เครื่อง/Browser
+    // เมื่อล็อกอินเครื่องใหม่ เครื่องเก่าจะเด้งออก
+    // ========================================
+    let currentSessionToken = null;
+    let sessionRealtimeChannel = null;
+    let sessionCheckTimer = null;
+    let isBeingKicked = false;
+
+    const SESSION_CHECK_EVERY_MS = 3000;
+
+    function makeSessionToken() {
+      if (window.crypto?.randomUUID) {
+        return crypto.randomUUID();
+      }
+
+      const bytes = new Uint8Array(32);
+      crypto.getRandomValues(bytes);
+
+      return Array.from(bytes)
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    function sessionStorageKey(userId) {
+      return `winNumberSessionToken:${userId}`;
+    }
+
+    function saveLocalSessionToken(userId, token) {
+      localStorage.setItem(
+        sessionStorageKey(userId),
+        token
+      );
+    }
+
+    function getLocalSessionToken(userId) {
+      return localStorage.getItem(
+        sessionStorageKey(userId)
+      );
+    }
+
+    function removeLocalSessionToken(userId) {
+      localStorage.removeItem(
+        sessionStorageKey(userId)
+      );
+    }
+
+    async function claimSingleSession(userId) {
+      const token = makeSessionToken();
+
+      const { data, error } =
+        await supabaseClient.rpc(
+          'claim_single_session',
+          { p_token: token }
+        );
+
+      if (error) {
+        throw new Error(
+          'เปิดใช้งานระบบ 1 บัญชี 1 เครื่องไม่สำเร็จ: ' +
+          error.message
+        );
+      }
+
+      currentSessionToken =
+        String(data || token);
+
+      saveLocalSessionToken(
+        userId,
+        currentSessionToken
+      );
+
+      return currentSessionToken;
+    }
+
+    async function getServerSessionToken() {
+      const { data, error } =
+        await supabaseClient.rpc(
+          'get_my_session_token'
+        );
+
+      if (error) {
+        throw error;
+      }
+
+      return data ? String(data) : null;
+    }
+
+    async function releaseSingleSession() {
+      if (!currentSessionToken) return;
+
+      try {
+        await supabaseClient.rpc(
+          'release_single_session',
+          { p_token: currentSessionToken }
+        );
+      } catch (error) {
+        console.warn(
+          'release session ไม่สำเร็จ:',
+          error
+        );
+      }
+    }
+
+    async function stopSingleSessionMonitor() {
+      if (sessionCheckTimer) {
+        clearInterval(sessionCheckTimer);
+        sessionCheckTimer = null;
+      }
+
+      if (sessionRealtimeChannel) {
+        try {
+          await supabaseClient
+            .removeChannel(
+              sessionRealtimeChannel
+            );
+        } catch (_) {}
+
+        sessionRealtimeChannel = null;
+      }
+    }
+
+    async function forceLogoutBecauseAnotherLogin() {
+      if (isBeingKicked) return;
+      isBeingKicked = true;
+
+      const userId = currentProfile?.id;
+
+      await stopSingleSessionMonitor();
+
+      if (userId) {
+        removeLocalSessionToken(userId);
+      }
+
+      // สำคัญ: ใช้ local เท่านั้น
+      // เพื่อไม่ให้เครื่องเก่าไปยกเลิก session ของเครื่องใหม่
+      try {
+        await supabaseClient.auth.signOut({
+          scope: 'local'
+        });
+      } catch (_) {}
+
+      currentSessionToken = null;
+      currentProfile = null;
+      adminProfilesCache.clear();
+
+      closeAdminPanel();
+      closeUserDetail();
+
+      document
+        .getElementById('adminManageBtn')
+        .classList
+        .add('hidden');
+
+      showLogin();
+
+      const message =
+        document.getElementById(
+          'loginMessage'
+        );
+
+      message.className =
+        'auth-message error';
+
+      message.innerText =
+        '⚠️ บัญชีนี้ถูกเข้าสู่ระบบจากอุปกรณ์อื่น ระบบจึงออกจากระบบเครื่องนี้อัตโนมัติ';
+
+      isBeingKicked = false;
+    }
+
+    async function verifySingleSession() {
+      if (
+        isBeingKicked ||
+        !currentProfile?.id ||
+        !currentSessionToken
+      ) {
+        return;
+      }
+
+      try {
+        const serverToken =
+          await getServerSessionToken();
+
+        if (
+          !serverToken ||
+          serverToken !== currentSessionToken
+        ) {
+          await forceLogoutBecauseAnotherLogin();
+        }
+      } catch (error) {
+        // ถ้าเน็ตหลุดชั่วคราว ไม่เด้ง user ออก
+        console.warn(
+          'ตรวจ session ไม่สำเร็จ:',
+          error?.message || error
+        );
+      }
+    }
+
+    async function startSingleSessionMonitor(userId) {
+      await stopSingleSessionMonitor();
+
+      sessionRealtimeChannel =
+        supabaseClient
+          .channel(
+            `single-session-${userId}-${Date.now()}`
+          )
+          .on(
+            'postgres_changes',
+            {
+              event: 'UPDATE',
+              schema: 'public',
+              table: 'profiles',
+              filter: `id=eq.${userId}`
+            },
+            async (payload) => {
+              const newToken =
+                payload?.new
+                  ?.current_session_token;
+
+              if (
+                currentSessionToken &&
+                newToken !==
+                  currentSessionToken
+              ) {
+                await forceLogoutBecauseAnotherLogin();
+              }
+            }
+          )
+          .subscribe();
+
+      sessionCheckTimer =
+        setInterval(
+          verifySingleSession,
+          SESSION_CHECK_EVERY_MS
+        );
+    }
+
 
     /* ========================================
        USERNAME -> INTERNAL EMAIL
@@ -3113,7 +3350,7 @@
   const { data, error } =
     await supabaseClient
       .from('profiles')
-      .select('id, username, role, created_at')
+      .select('id, username, role, created_at, current_session_token')
       .eq('id', userId)
       .maybeSingle();
 
@@ -3197,6 +3434,16 @@
 
         currentProfile = profile;
 
+        // Login เครื่องล่าสุดจะเขียน token ใหม่ทับของเดิม
+        // ทำให้เครื่องเก่าตรวจเจอและเด้งออก
+        await claimSingleSession(
+          data.user.id
+        );
+
+        await startSingleSessionMonitor(
+          data.user.id
+        );
+
         await recordLoginHistory(
           data.user.id
         );
@@ -3208,7 +3455,15 @@
         );
 
       } catch (error) {
-        await supabaseClient.auth.signOut();
+        await stopSingleSessionMonitor();
+
+        try {
+          await supabaseClient.auth.signOut({
+            scope: 'local'
+          });
+        } catch (_) {}
+
+        currentSessionToken = null;
         currentProfile = null;
 
         message.className =
@@ -3248,8 +3503,25 @@
 
 
     async function logoutUser() {
-      await supabaseClient.auth.signOut();
+      const userId = currentProfile?.id;
 
+      await stopSingleSessionMonitor();
+
+      // ล้าง active token เฉพาะเมื่อ token ใน DB ยังเป็นของเครื่องนี้
+      await releaseSingleSession();
+
+      if (userId) {
+        removeLocalSessionToken(userId);
+      }
+
+      // ใช้ local sign out เพื่อไม่กระทบ session ที่อาจเพิ่ง login จากเครื่องอื่น
+      try {
+        await supabaseClient.auth.signOut({
+          scope: 'local'
+        });
+      } catch (_) {}
+
+      currentSessionToken = null;
       currentProfile = null;
       adminProfilesCache.clear();
 
@@ -3291,13 +3563,55 @@
             session.user.id
           );
 
+        const localToken =
+          getLocalSessionToken(
+            session.user.id
+          );
+
+        const serverToken =
+          await getServerSessionToken();
+
+        if (localToken) {
+          currentSessionToken =
+            localToken;
+
+          // Browser นี้เคย login อยู่ แต่ token ใน Supabase เปลี่ยนแล้ว
+          // แปลว่ามีการ login จากเครื่องอื่น
+          if (
+            !serverToken ||
+            serverToken !== localToken
+          ) {
+            await forceLogoutBecauseAnotherLogin();
+            return;
+          }
+        } else {
+          // สำหรับผู้ใช้เดิมก่อนเพิ่มระบบ single-session
+          // หรือ storage token หาย ให้ session นี้เป็นเครื่องล่าสุด
+          await claimSingleSession(
+            session.user.id
+          );
+        }
+
+        await startSingleSessionMonitor(
+          session.user.id
+        );
+
         enterProgram(
           currentProfile.username
         );
 
       } catch (error) {
         console.error(error);
-        await supabaseClient.auth.signOut();
+
+        await stopSingleSessionMonitor();
+
+        try {
+          await supabaseClient.auth.signOut({
+            scope: 'local'
+          });
+        } catch (_) {}
+
+        currentSessionToken = null;
         currentProfile = null;
         showLogin();
       }
