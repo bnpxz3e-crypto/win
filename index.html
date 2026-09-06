@@ -1400,6 +1400,186 @@
     }
 
 
+
+
+    /* ========================================
+       LOGIN HISTORY
+    ======================================== */
+
+    .login-history-box {
+      margin-top: 14px;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+    }
+
+    .login-history-header {
+      width: 100%;
+      margin: 0;
+      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-radius: 0;
+      background: linear-gradient(135deg, #f8fafc, #eef2ff);
+      color: #334155;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: left;
+      box-shadow: none;
+    }
+
+    .login-history-header:hover {
+      background: linear-gradient(135deg, #eef2ff, #ede9fe);
+    }
+
+    .login-history-title-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .login-history-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 21px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: #7c3aed;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .login-history-arrow {
+      width: 29px;
+      height: 29px;
+      flex: 0 0 29px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #7c3aed;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.10);
+      transition: transform .30s ease;
+    }
+
+    .login-history-box.open .login-history-arrow {
+      transform: rotate(180deg);
+    }
+
+    .login-history-content {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      padding: 0 13px;
+      transform-origin: top center;
+      transform: perspective(700px) rotateX(-8deg);
+      transition:
+        max-height .38s ease,
+        opacity .25s ease,
+        padding .38s ease,
+        transform .38s ease;
+    }
+
+    .login-history-box.open .login-history-content {
+      max-height: 390px;
+      opacity: 1;
+      padding: 12px 13px 14px;
+      transform: perspective(700px) rotateX(0deg);
+    }
+
+    .login-history-list {
+      max-height: 255px;
+      overflow-y: auto;
+      padding-right: 3px;
+    }
+
+    .login-history-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .login-history-list::-webkit-scrollbar-thumb {
+      background: #c4b5fd;
+      border-radius: 999px;
+    }
+
+    .login-history-item {
+      display: flex;
+      gap: 11px;
+      padding: 10px 8px;
+      text-align: left;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .login-history-item:last-child {
+      border-bottom: none;
+    }
+
+    .login-history-icon {
+      width: 35px;
+      height: 35px;
+      flex: 0 0 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: #eef2ff;
+      font-size: 15px;
+    }
+
+    .login-history-item.latest .login-history-icon {
+      background: #dcfce7;
+    }
+
+    .login-history-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .login-history-item-title {
+      color: #334155;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .login-history-time {
+      margin-top: 3px;
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .login-history-empty {
+      padding: 18px 6px;
+      color: #94a3b8;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .login-history-clear {
+      width: 100%;
+      margin: 10px 0 0;
+      padding: 9px;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 11px;
+      box-shadow: none;
+    }
+
+    .login-history-clear:hover {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+
     /* ========================================
        TOAST
     ======================================== */
@@ -2482,6 +2662,57 @@
       </div>
 
 
+
+
+      <!-- LOGIN HISTORY -->
+
+      <div
+        id="loginHistoryBox"
+        class="login-history-box"
+      >
+
+        <button
+          class="login-history-header"
+          onclick="toggleLoginHistory()"
+        >
+
+          <span class="login-history-title-row">
+            <span>📖 ประวัติการเข้าสู่ระบบ</span>
+
+            <span
+              id="loginHistoryCount"
+              class="login-history-count"
+            >
+              0
+            </span>
+          </span>
+
+          <span class="login-history-arrow">
+            ▼
+          </span>
+
+        </button>
+
+        <div class="login-history-content">
+
+          <div
+            id="loginHistoryList"
+            class="login-history-list"
+          ></div>
+
+          <button
+            id="clearLoginHistoryBtn"
+            class="login-history-clear"
+            onclick="clearCurrentLoginHistory()"
+          >
+            🧹 ล้างประวัติการเข้าสู่ระบบ
+          </button>
+
+        </div>
+
+      </div>
+
+
       <!-- DELETE -->
 
       <button
@@ -2605,6 +2836,71 @@
         'winNumberUsers',
         JSON.stringify(users)
       );
+
+    }
+
+
+
+
+    /* ========================================
+       LOGIN HISTORY STORAGE
+    ======================================== */
+
+    function recordLoginHistoryByKey(userKey) {
+
+      const users =
+        getUsers();
+
+
+      const user =
+        users[userKey];
+
+
+      if (!user) {
+
+        return;
+
+      }
+
+
+      if (
+        !Array.isArray(
+          user.loginHistory
+        )
+      ) {
+
+        user.loginHistory = [];
+
+      }
+
+
+      user.loginHistory.unshift({
+
+        loginAt:
+          new Date().toISOString()
+
+      });
+
+
+      /*
+        เก็บสูงสุด 100 ครั้งต่อสมาชิก
+        เพื่อไม่ให้ localStorage ใหญ่เกินไป
+      */
+
+      if (
+        user.loginHistory.length > 100
+      ) {
+
+        user.loginHistory =
+          user.loginHistory.slice(
+            0,
+            100
+          );
+
+      }
+
+
+      saveUsers(users);
 
     }
 
@@ -2891,8 +3187,35 @@
         getUsers();
 
 
+      /*
+        ค้นหาจากค่า user.username จริง
+        เพื่อรองรับข้อมูลเก่าที่ key ใน localStorage
+        อาจไม่ตรงกับชื่อที่แสดงในหน้าจัดการสมาชิก
+      */
+
+      const normalizedLoginUsername =
+        String(username)
+          .trim()
+          .normalize('NFC');
+
+
+      const userKey =
+        Object.keys(users).find(key => {
+
+          const savedUsername =
+            String(users[key]?.username || '')
+              .trim()
+              .normalize('NFC');
+
+          return savedUsername === normalizedLoginUsername;
+
+        });
+
+
       const user =
-        users[username];
+        userKey
+          ? users[userKey]
+          : null;
 
 
       if (!user) {
@@ -2916,6 +3239,15 @@
         return;
 
       }
+
+
+      /*
+        บันทึกประวัติทุกครั้งที่ Login สำเร็จ
+      */
+
+      recordLoginHistoryByKey(
+        userKey
+      );
 
 
       localStorage.setItem(
@@ -3032,7 +3364,26 @@
         getUsers();
 
 
-      if (!users[logged]) {
+      const normalizedLogged =
+        String(logged)
+          .trim()
+          .normalize('NFC');
+
+
+      const loggedUserKey =
+        Object.keys(users).find(key => {
+
+          const savedUsername =
+            String(users[key]?.username || '')
+              .trim()
+              .normalize('NFC');
+
+          return savedUsername === normalizedLogged;
+
+        });
+
+
+      if (!loggedUserKey) {
 
         localStorage.removeItem(
           'winNumberLoggedIn'
@@ -3046,7 +3397,9 @@
       }
 
 
-      enterProgram(logged);
+      enterProgram(
+        users[loggedUserKey].username
+      );
 
     }
 
@@ -3434,6 +3787,24 @@
         dateText;
 
 
+      /*
+        โหลดประวัติ Login ของสมาชิก
+        และพับเก็บไว้ก่อนทุกครั้งที่เปิดรายละเอียด
+      */
+
+      renderLoginHistory(
+        user
+      );
+
+
+      document
+        .getElementById(
+          'loginHistoryBox'
+        )
+        ?.classList
+        .remove('open');
+
+
       const deleteBtn =
         document
           .getElementById(
@@ -3695,6 +4066,283 @@
 
       showToast(
         `เปลี่ยนรหัสผ่าน ${user.username} สำเร็จ`
+      );
+
+    }
+
+
+
+
+    /* ========================================
+       LOGIN HISTORY DISPLAY
+    ======================================== */
+
+    function toggleLoginHistory() {
+
+      const box =
+        document.getElementById(
+          'loginHistoryBox'
+        );
+
+
+      if (!box) {
+
+        return;
+
+      }
+
+
+      box.classList.toggle(
+        'open'
+      );
+
+    }
+
+
+    function renderLoginHistory(user) {
+
+      const list =
+        document.getElementById(
+          'loginHistoryList'
+        );
+
+
+      const count =
+        document.getElementById(
+          'loginHistoryCount'
+        );
+
+
+      const clearBtn =
+        document.getElementById(
+          'clearLoginHistoryBtn'
+        );
+
+
+      if (
+        !list ||
+        !count
+      ) {
+
+        return;
+
+      }
+
+
+      const history =
+        Array.isArray(
+          user?.loginHistory
+        )
+          ? user.loginHistory
+          : [];
+
+
+      count.innerText =
+        history.length;
+
+
+      if (
+        history.length === 0
+      ) {
+
+        list.innerHTML = `
+
+          <div class="login-history-empty">
+            📭 ยังไม่มีประวัติการเข้าสู่ระบบ
+          </div>
+
+        `;
+
+
+        if (clearBtn) {
+
+          clearBtn.style.display =
+            'none';
+
+        }
+
+
+        return;
+
+      }
+
+
+      if (clearBtn) {
+
+        clearBtn.style.display =
+          'block';
+
+      }
+
+
+      let html = '';
+
+
+      history.forEach(
+        (item, index) => {
+
+          let dateText = '-';
+
+
+          try {
+
+            dateText =
+              new Date(
+                item.loginAt
+              )
+              .toLocaleString(
+                'th-TH',
+                {
+                  dateStyle: 'medium',
+                  timeStyle: 'short'
+                }
+              );
+
+          } catch (error) {
+
+            dateText =
+              item.loginAt || '-';
+
+          }
+
+
+          html += `
+
+            <div
+              class="
+                login-history-item
+                ${
+                  index === 0
+                    ? 'latest'
+                    : ''
+                }
+              "
+            >
+
+              <div class="login-history-icon">
+                ${
+                  index === 0
+                    ? '🟢'
+                    : '🔵'
+                }
+              </div>
+
+              <div class="login-history-main">
+
+                <div class="login-history-item-title">
+                  ${
+                    index === 0
+                      ? 'เข้าสู่ระบบล่าสุด'
+                      : `เข้าสู่ระบบครั้งก่อน #${index}`
+                  }
+                </div>
+
+                <div class="login-history-time">
+                  ${dateText}
+                </div>
+
+              </div>
+
+            </div>
+
+          `;
+
+        }
+      );
+
+
+      list.innerHTML =
+        html;
+
+    }
+
+
+    function clearCurrentLoginHistory() {
+
+      if (!isAdmin()) {
+
+        return;
+
+      }
+
+
+      if (
+        !selectedAdminUserKey
+      ) {
+
+        return;
+
+      }
+
+
+      const users =
+        getUsers();
+
+
+      const user =
+        users[
+          selectedAdminUserKey
+        ];
+
+
+      if (!user) {
+
+        return;
+
+      }
+
+
+      const history =
+        Array.isArray(
+          user.loginHistory
+        )
+          ? user.loginHistory
+          : [];
+
+
+      if (
+        history.length === 0
+      ) {
+
+        return;
+
+      }
+
+
+      const ok =
+        confirm(
+          `ต้องการล้างประวัติการเข้าสู่ระบบของ "${user.username}" ทั้งหมดใช่หรือไม่?`
+        );
+
+
+      if (!ok) {
+
+        return;
+
+      }
+
+
+      user.loginHistory = [];
+
+
+      saveUsers(users);
+
+
+      renderLoginHistory(
+        user
+      );
+
+
+      document
+        .getElementById(
+          'loginHistoryBox'
+        )
+        ?.classList
+        .remove('open');
+
+
+      showToast(
+        `ล้างประวัติของ ${user.username} แล้ว`
       );
 
     }
