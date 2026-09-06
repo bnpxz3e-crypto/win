@@ -3110,19 +3110,23 @@
 
 
     async function fetchOwnProfile(userId) {
-      const { data, error } =
-        await supabaseClient
-          .from('profiles')
-          .select('id, username, role, created_at')
-          .eq('id', userId)
-          .single();
+  const { data, error } =
+    await supabaseClient
+      .from('profiles')
+      .select('id, username, role, created_at')
+      .eq('id', userId)
+      .maybeSingle();
 
-      if (error) {
-        throw error;
-      }
+  if (error) {
+    throw error;
+  }
 
-      return data;
-    }
+  if (!data) {
+    throw new Error('ไม่พบข้อมูลสมาชิกใน profiles');
+  }
+
+  return data;
+}
 
 
     async function recordLoginHistory(userId) {
