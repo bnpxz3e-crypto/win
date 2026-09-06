@@ -3,566 +3,2533 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>วินเลข</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>โปรแกรมวินเลข</title>
 
   <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: "Prompt", sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: "Prompt", "Tahoma", sans-serif;
+
+      background:
+        linear-gradient(
+          135deg,
+          #0f2027,
+          #203a43,
+          #2c5364
+        );
+
       color: #fff;
+
       text-align: center;
+
       padding: 20px;
+
+      margin: 0;
+
       min-height: 100vh;
+
       overflow-x: hidden;
     }
 
+
+    /* ========================================
+       MAIN CONTAINER
+    ======================================== */
+
     .container {
       max-width: 760px;
+
       margin: auto;
+
       background: #ffffff;
+
       color: #000;
+
       padding: 20px;
+
       border-radius: 15px;
-      box-shadow: 0 10px 30px rgb(253, 0, 0);
+
+      box-shadow:
+        0 10px 30px rgb(253, 0, 0);
+
       position: relative;
+
       z-index: 2;
     }
 
+
+    /* ========================================
+       LOGIN / REGISTER
+    ======================================== */
+
+    .auth-screen {
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 100000;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 20px;
+
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(37, 99, 235, 0.30),
+          transparent 40%
+        ),
+        linear-gradient(
+          135deg,
+          #0f172a,
+          #172554,
+          #0f172a
+        );
+    }
+
+
+    .auth-box {
+      width: 100%;
+
+      max-width: 400px;
+
+      padding: 30px 25px;
+
+      border-radius: 22px;
+
+      background:
+        rgba(255, 255, 255, 0.98);
+
+      color: #111827;
+
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.50),
+        0 0 35px rgba(37, 99, 235, 0.25);
+    }
+
+
+    .auth-logo {
+      font-size: 55px;
+
+      margin-bottom: 5px;
+    }
+
+
+    .auth-title {
+      font-size: 27px;
+
+      font-weight: 800;
+
+      margin: 0;
+    }
+
+
+    .auth-subtitle {
+      font-size: 14px;
+
+      color: #6b7280;
+
+      margin: 8px 0 24px;
+    }
+
+
+    .auth-group {
+      text-align: left;
+
+      margin-bottom: 15px;
+    }
+
+
+    .auth-group label {
+      display: block;
+
+      margin-bottom: 6px;
+
+      font-size: 14px;
+
+      font-weight: bold;
+    }
+
+
+    .auth-group input {
+      width: 100%;
+
+      padding: 13px 14px;
+
+      border:
+        1.5px solid #d1d5db;
+
+      border-radius: 10px;
+
+      font-size: 16px;
+
+      outline: none;
+    }
+
+
+    .auth-group input:focus {
+      border-color: #2563eb;
+
+      box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+
+    .auth-login-btn {
+      width: 100%;
+
+      margin: 5px 0 10px;
+
+      padding: 13px;
+
+      border-radius: 10px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #1d4ed8
+        );
+
+      color: white;
+
+      font-size: 16px;
+    }
+
+
+    .auth-register-btn {
+      width: 100%;
+
+      margin: 0;
+
+      padding: 12px;
+
+      border:
+        1.5px solid #2563eb;
+
+      border-radius: 10px;
+
+      background: white;
+
+      color: #2563eb;
+
+      font-size: 15px;
+    }
+
+
+    .auth-back {
+      margin-top: 14px;
+
+      color: #6b7280;
+
+      background: transparent;
+    }
+
+
+    .auth-message {
+      min-height: 22px;
+
+      margin-top: 12px;
+
+      font-size: 14px;
+
+      font-weight: bold;
+    }
+
+
+    .auth-message.error {
+      color: #dc2626;
+    }
+
+
+    .auth-message.success {
+      color: #16a34a;
+    }
+
+
+    .hidden {
+      display: none !important;
+    }
+
+
+    /* ========================================
+       USER BAR
+    ======================================== */
+
+    .user-bar {
+      display: flex;
+
+      justify-content: flex-end;
+
+      align-items: center;
+
+      gap: 7px;
+
+      margin-bottom: 12px;
+
+      font-size: 13px;
+    }
+
+
+    .user-name {
+      font-weight: bold;
+
+      color: #2563eb;
+    }
+
+
+    .logout-btn {
+      margin: 0;
+
+      padding: 7px 11px;
+
+      border-radius: 7px;
+
+      background: #ef4444;
+
+      color: white;
+    }
+
+
+    /* ========================================
+       TABS
+    ======================================== */
+
     .tabs {
       display: flex;
+
       justify-content: center;
+
       gap: 8px;
+
       margin-bottom: 18px;
+
       flex-wrap: wrap;
     }
 
+
     .tab-btn {
       background: #fff;
+
       color: #374151;
-      border: 1.5px solid #d1d5db;
+
+      border:
+        1.5px solid #d1d5db;
+
       border-radius: 9px;
+
       padding: 8px 18px;
+
       font-size: 14px;
+
       font-weight: bold;
+
       cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.08);
+
       transition: 0.15s;
     }
 
+
+    .tab-btn:hover {
+      transform: translateY(-1px);
+    }
+
+
     .tab-btn.active {
       background: #2563eb;
+
       color: #fff;
+
       border-color: #2563eb;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+
+      box-shadow:
+        0 4px 12px rgba(37, 99, 235, 0.25);
     }
+
+
+    #adminManageBtn {
+      background:
+        linear-gradient(
+          135deg,
+          #7c3aed,
+          #9333ea
+        );
+
+      color: white;
+
+      border-color: #7c3aed;
+    }
+
+
+    /* ========================================
+       NORMAL PAGE
+    ======================================== */
 
     .page {
       display: none;
     }
 
+
     .page.active {
       display: block;
     }
 
+
     .normal-top-row {
       display: flex;
+
       align-items: flex-start;
+
       justify-content: center;
+
       gap: 14px;
+
       margin-top: 12px;
     }
+
 
     .main-input-zone {
       flex: 1;
+
       max-width: 600px;
     }
 
+
     .input-row {
       position: relative;
+
       display: flex;
+
       justify-content: center;
+
       align-items: center;
+
       gap: 12px;
+
       margin-top: 12px;
     }
+
 
     .input-row input[type="text"],
     .input-row input {
       width: 400px;
-      max-width: calc(100% - 150px);
+
+      max-width:
+        calc(100% - 150px);
+
       padding: 15px;
+
       font-size: 20px;
+
       text-align: center;
+
       border-radius: 10px;
-      border: 2px solid #ddd;
+
+      border:
+        2px solid #ddd;
     }
+
 
     .checkbox-inline {
       position: static;
+
       width: auto;
+
       display: flex;
+
       align-items: center;
+
       gap: 4px;
+
       font-size: 14px;
-      padding: 0px;
+
+      padding: 0;
+
       border-radius: 2px;
+
       cursor: pointer;
+
       white-space: nowrap;
     }
 
+
     .checkbox-inline input {
       width: auto !important;
+
       max-width: none !important;
+
       padding: 0 !important;
+
       margin: 0;
     }
 
+
     textarea {
       width: 100%;
+
       max-width: 560px;
+
       min-height: 130px;
+
       padding: 15px;
+
       font-size: 20px;
+
       text-align: center;
+
       border-radius: 10px;
-      border: 2px solid #ddd;
+
+      border:
+        2px solid #ddd;
+
       resize: vertical;
-      font-family: "Prompt", sans-serif;
+
+      font-family: inherit;
     }
+
 
     .hint {
       color: #555;
+
       font-size: 14px;
+
       margin-top: 8px;
+
       line-height: 1.6;
     }
+
 
     .buttons {
       margin-top: 15px;
     }
 
+
     button {
       padding: 10px 15px;
+
       margin: 5px;
+
       border: none;
+
       border-radius: 8px;
+
       cursor: pointer;
+
       font-weight: bold;
+
+      transition:
+        transform 0.15s,
+        opacity 0.15s;
     }
+
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+
+    button:active {
+      transform: scale(0.97);
+    }
+
 
     .btn-main {
       background: #ff0e0e;
+
       color: #fff;
     }
+
 
     .btn-secondary {
       background: #007bff;
+
       color: #fff;
     }
+
 
     .btn-danger {
       background: #dc3545;
+
       color: #fff;
     }
+
 
     .btn-show {
       background: #6f42c1;
+
       color: #fff;
     }
 
+
     .result-box {
       margin-top: 20px;
+
       display: flex;
+
       justify-content: center;
     }
 
+
     .result-inner {
       width: 100%;
+
       max-width: 600px;
     }
 
+
     .block {
       margin-bottom: 20px;
+
       padding: 15px;
+
       border-radius: 10px;
+
       background: #f4f4f4;
+
       color: #000;
+
       text-align: center;
     }
 
+
     .preset-block {
       background: #f8fafc;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+      border:
+        1px solid #e5e7eb;
+
+      box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.08);
+
       margin-bottom: 0;
     }
+
 
     .preset-inner {
       max-width: 100%;
     }
 
+
     .preset-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
       gap: 14px;
+
       align-items: start;
     }
 
+
     .preset-grid .title {
       padding: 8px 10px;
+
       border-radius: 10px;
-      background: linear-gradient(135deg, #eff6ff, #fdf2f8);
-      border: 1px solid #e5e7eb;
+
+      background:
+        linear-gradient(
+          135deg,
+          #eff6ff,
+          #fdf2f8
+        );
+
+      border:
+        1px solid #e5e7eb;
     }
+
 
     .preset-grid .copy,
     .preset-grid .btn-show {
       min-width: 92px;
     }
 
+
     .title {
       font-weight: bold;
+
       margin-bottom: 10px;
+
       font-size: 18px;
+
       color: #dc2626;
     }
 
+
     .sub-title {
       font-weight: bold;
+
       margin-top: 14px;
+
       margin-bottom: 7px;
+
       color: #111;
+
       text-align: left;
     }
 
+
     .copy {
       margin-top: 10px;
+
       background: #107e06ce;
+
       color: #fff;
     }
 
+
     .numbers {
       word-break: break-word;
+
       line-height: 1.7;
     }
 
+
     .preset-numbers {
       display: none;
+
       margin-top: 12px;
+
       padding: 12px;
+
       background: #ffffff;
+
       border-radius: 10px;
-      border: 1px dashed #94a3b8;
+
+      border:
+        1px dashed #94a3b8;
+
       max-height: 320px;
+
       overflow-y: auto;
     }
+
 
     .num2 {
       color: #0051ff;
     }
 
+
     .num3 {
       color: red;
     }
 
+
     .count-text {
       text-align: center;
+
       font-weight: bold;
+
       color: #000;
+
       margin-top: 6px;
     }
 
-    .toast {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #28a745;
-      color: #fff;
-      padding: 10px 15px;
-      border-radius: 8px;
-      font-weight: bold;
-      z-index: 99999;
-    }
 
-    .raindrop {
-      position: fixed;
-      top: -20px;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: rgba(173, 216, 230, 0.8);
-      pointer-events: none;
-      z-index: 0;
-      animation: rain linear forwards;
-    }
+    /* ========================================
+       ADMIN OVERLAY
+    ======================================== */
 
-    .loader {
+    .admin-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
+
+      inset: 0;
+
+      z-index: 200000;
+
+      background:
+        rgba(3, 7, 18, 0.78);
+
+      backdrop-filter:
+        blur(7px);
+
       display: flex;
-      justify-content: center;
+
       align-items: center;
-      z-index: 9999;
+
+      justify-content: center;
+
+      padding: 20px;
     }
 
-    .spinner {
-      width: 60px;
-      height: 60px;
-      border: 6px solid #ffffff30;
-      border-top: 6px solid #00eaff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      box-shadow: 0 0 20px #00eaff;
+
+    .admin-panel {
+      width: 100%;
+
+      max-width: 1050px;
+
+      max-height: 90vh;
+
+      overflow-y: auto;
+
+      background:
+        linear-gradient(
+          145deg,
+          #ffffff,
+          #f8fafc
+        );
+
+      color: #111827;
+
+      border-radius: 24px;
+
+      padding: 24px;
+
+      box-shadow:
+        0 30px 90px rgba(0, 0, 0, 0.65);
+
+      border:
+        1px solid rgba(255,255,255,0.4);
     }
 
-    /* กล่องคำนวณเลขแบบลอยด้านซ้าย */
-    .floating-calc-box {
-      position: fixed;
-      left: 0;
-      top: 135px;
-      z-index: 9998;
+
+    .admin-panel-header {
       display: flex;
-      flex-direction: row-reverse;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 10px;
+
+      margin-bottom: 8px;
+    }
+
+
+    .admin-panel-title {
+      text-align: left;
+
+      font-size: 25px;
+
+      font-weight: 900;
+
+      color: #6d28d9;
+    }
+
+
+    .admin-panel-subtitle {
+      text-align: left;
+
+      color: #64748b;
+
+      font-size: 13px;
+
+      margin-top: 4px;
+    }
+
+
+    .admin-close-btn {
+      width: 42px;
+
+      height: 42px;
+
+      padding: 0;
+
+      margin: 0;
+
+      border-radius: 50%;
+
+      color: white;
+
+      background:
+        linear-gradient(
+          135deg,
+          #ef4444,
+          #dc2626
+        );
+
+      font-size: 19px;
+
+      box-shadow:
+        0 5px 15px rgba(220, 38, 38, 0.3);
+    }
+
+
+    .admin-summary {
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      gap: 10px;
+
+      margin: 18px 0;
+
+      padding: 12px 16px;
+
+      border-radius: 12px;
+
+      background: #f1f5f9;
+
+      border:
+        1px solid #e2e8f0;
+
+      font-weight: bold;
+    }
+
+
+    .admin-summary-number {
+      color: #7c3aed;
+
+      font-size: 18px;
+    }
+
+
+    /* ========================================
+       5 USER CARDS PER ROW
+    ======================================== */
+
+    .admin-users-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+      gap: 13px;
+
       align-items: stretch;
     }
 
+
+    .admin-user-mini-card {
+      position: relative;
+
+      min-height: 120px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: center;
+
+      align-items: center;
+
+      gap: 9px;
+
+      padding: 14px 8px;
+
+      border-radius: 16px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #ffffff,
+          #f1f5f9
+        );
+
+      border:
+        1px solid #e2e8f0;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 5px 15px rgba(15, 23, 42, 0.08);
+
+      transition:
+        transform .20s,
+        box-shadow .20s,
+        border-color .20s;
+    }
+
+
+    .admin-user-mini-card:hover {
+      transform:
+        translateY(-5px);
+
+      box-shadow:
+        0 12px 25px rgba(124, 58, 237, 0.16);
+
+      border-color: #a78bfa;
+    }
+
+
+    .admin-user-mini-card.admin-card {
+      background:
+        linear-gradient(
+          145deg,
+          #faf5ff,
+          #ede9fe
+        );
+
+      border-color: #c4b5fd;
+    }
+
+
+    .admin-user-avatar {
+      width: 47px;
+
+      height: 47px;
+
+      border-radius: 50%;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #7c3aed
+        );
+
+      color: white;
+
+      font-size: 21px;
+
+      box-shadow:
+        0 6px 15px rgba(79, 70, 229, 0.25);
+    }
+
+
+    .admin-card .admin-user-avatar {
+      background:
+        linear-gradient(
+          135deg,
+          #7c3aed,
+          #c026d3
+        );
+    }
+
+
+    .admin-mini-username {
+      width: 100%;
+
+      font-size: 13px;
+
+      font-weight: 800;
+
+      color: #1e293b;
+
+      white-space: nowrap;
+
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+    }
+
+
+    .admin-mini-badge {
+      position: absolute;
+
+      top: 7px;
+
+      right: 7px;
+
+      padding: 3px 6px;
+
+      background: #7c3aed;
+
+      color: white;
+
+      border-radius: 20px;
+
+      font-size: 8px;
+
+      font-weight: bold;
+    }
+
+
+    .admin-card-hint {
+      color: #94a3b8;
+
+      font-size: 10px;
+    }
+
+
+    /* ========================================
+       USER DETAIL MODAL
+    ======================================== */
+
+    .user-detail-overlay {
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 300000;
+
+      background:
+        rgba(2, 6, 23, 0.82);
+
+      backdrop-filter:
+        blur(8px);
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 18px;
+    }
+
+
+    .user-detail-box {
+      width: 100%;
+
+      max-width: 520px;
+
+      max-height: 92vh;
+
+      overflow-y: auto;
+
+      padding: 26px;
+
+      border-radius: 24px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #ffffff,
+          #f8fafc
+        );
+
+      color: #111827;
+
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.65);
+
+      animation:
+        detailPop .20s ease-out;
+    }
+
+
+    @keyframes detailPop {
+
+      from {
+        opacity: 0;
+
+        transform:
+          scale(0.94)
+          translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+
+        transform:
+          scale(1)
+          translateY(0);
+      }
+
+    }
+
+
+    .detail-header {
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: flex-start;
+
+      gap: 10px;
+
+      margin-bottom: 22px;
+    }
+
+
+    .detail-user-info {
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+    }
+
+
+    .detail-avatar {
+      width: 58px;
+
+      height: 58px;
+
+      border-radius: 18px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      color: white;
+
+      font-size: 27px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #7c3aed
+        );
+
+      box-shadow:
+        0 7px 18px rgba(79, 70, 229, 0.25);
+    }
+
+
+    .detail-title {
+      text-align: left;
+
+      font-size: 21px;
+
+      font-weight: 900;
+
+      color: #111827;
+    }
+
+
+    .detail-subtitle {
+      text-align: left;
+
+      margin-top: 3px;
+
+      font-size: 12px;
+
+      color: #64748b;
+    }
+
+
+    .detail-close {
+      width: 38px;
+
+      height: 38px;
+
+      margin: 0;
+
+      padding: 0;
+
+      border-radius: 50%;
+
+      background: #ef4444;
+
+      color: white;
+
+      font-size: 16px;
+    }
+
+
+    .detail-section {
+      margin-bottom: 16px;
+
+      text-align: left;
+    }
+
+
+    .detail-label {
+      display: block;
+
+      margin-bottom: 6px;
+
+      color: #475569;
+
+      font-size: 12px;
+
+      font-weight: 800;
+    }
+
+
+    .detail-input-row {
+      display: flex;
+
+      gap: 8px;
+
+      width: 100%;
+    }
+
+
+    .detail-input {
+      width: 100%;
+
+      flex: 1;
+
+      min-width: 0;
+
+      padding: 12px 13px;
+
+      border:
+        1.5px solid #cbd5e1;
+
+      border-radius: 10px;
+
+      background: #fff;
+
+      color: #0f172a;
+
+      font-size: 15px;
+
+      outline: none;
+    }
+
+
+    .detail-input:focus {
+      border-color: #7c3aed;
+
+      box-shadow:
+        0 0 0 3px rgba(124, 58, 237, 0.10);
+    }
+
+
+    .detail-input[readonly] {
+      background: #f8fafc;
+
+      color: #334155;
+    }
+
+
+    .detail-eye-btn {
+      flex: 0 0 auto;
+
+      margin: 0;
+
+      background: #0284c7;
+
+      color: white;
+
+      min-width: 70px;
+    }
+
+
+    .detail-save-btn {
+      width: 100%;
+
+      margin: 4px 0 0;
+
+      padding: 12px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #16a34a,
+          #15803d
+        );
+
+      color: white;
+
+      font-size: 15px;
+
+      box-shadow:
+        0 5px 15px rgba(22, 163, 74, 0.20);
+    }
+
+
+    .detail-info-box {
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      padding: 12px;
+
+      border-radius: 11px;
+
+      background: #f1f5f9;
+
+      border:
+        1px solid #e2e8f0;
+
+      color: #475569;
+
+      text-align: left;
+
+      font-size: 13px;
+
+      margin-top: 16px;
+    }
+
+
+    .detail-delete-btn {
+      width: 100%;
+
+      margin: 18px 0 0;
+
+      padding: 12px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #ef4444,
+          #b91c1c
+        );
+
+      color: white;
+
+      font-size: 14px;
+
+      box-shadow:
+        0 5px 15px rgba(220, 38, 38, 0.18);
+    }
+
+
+    .detail-delete-btn:disabled {
+      background: #94a3b8;
+
+      cursor: not-allowed;
+
+      box-shadow: none;
+    }
+
+
+    .admin-protect-text {
+      margin-top: 9px;
+
+      color: #7c3aed;
+
+      font-size: 11px;
+
+      font-weight: bold;
+    }
+
+
+    /* ========================================
+       TOAST
+    ======================================== */
+
+    .toast {
+      position: fixed;
+
+      top: 20px;
+
+      right: 20px;
+
+      z-index: 999999;
+
+      background: #16a34a;
+
+      color: white;
+
+      padding: 11px 16px;
+
+      border-radius: 10px;
+
+      font-weight: bold;
+
+      box-shadow:
+        0 7px 20px rgba(0, 0, 0, 0.25);
+    }
+
+
+    /* ========================================
+       LOADER
+    ======================================== */
+
+    .loader {
+      position: fixed;
+
+      inset: 0;
+
+      background:
+        rgba(0, 0, 0, 0.6);
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      z-index: 9999;
+    }
+
+
+    .spinner {
+      width: 60px;
+
+      height: 60px;
+
+      border:
+        6px solid #ffffff30;
+
+      border-top:
+        6px solid #00eaff;
+
+      border-radius: 50%;
+
+      animation:
+        spin 0.8s linear infinite;
+
+      box-shadow:
+        0 0 20px #00eaff;
+    }
+
+
+    @keyframes spin {
+
+      to {
+        transform:
+          rotate(360deg);
+      }
+
+    }
+
+
+    /* ========================================
+       RAIN
+    ======================================== */
+
+    .raindrop {
+      position: fixed;
+
+      top: -20px;
+
+      width: 4px;
+
+      height: 4px;
+
+      border-radius: 50%;
+
+      background:
+        rgba(173, 216, 230, 0.8);
+
+      pointer-events: none;
+
+      z-index: 0;
+
+      animation:
+        rain linear forwards;
+    }
+
+
+    @keyframes rain {
+
+      to {
+        transform:
+          translateY(110vh)
+          translateX(-20px);
+      }
+
+    }
+
+
+    /* ========================================
+       MINI CALCULATOR
+    ======================================== */
+
+    .floating-calc-box {
+      position: fixed;
+
+      left: 0;
+
+      top: 135px;
+
+      z-index: 9998;
+
+      display: flex;
+
+      flex-direction: row-reverse;
+
+      align-items: stretch;
+    }
+
+
     .floating-calc-toggle {
       width: 42px;
+
       min-height: 54px;
+
       margin: 0;
+
       padding: 0;
-      border-radius: 0 14px 14px 0;
+
+      border-radius:
+        0 14px 14px 0;
+
       background: #dc2626;
-      color: #ffffff;
-      box-shadow: 0 0 25px rgba(220, 38, 38, 0.9);
+
+      color: white;
+
+      box-shadow:
+        0 0 25px rgba(220, 38, 38, 0.9);
+
       font-size: 20px;
     }
 
+
     .floating-calc-content {
       width: 200px;
+
       background: #ffffff;
-      border-right: 2px solid #dc2626;
-      border-top: 2px solid #dc2626;
-      border-bottom: 2px solid #dc2626;
-      border-radius: 0 14px 14px 0;
+
+      border-right:
+        2px solid #dc2626;
+
+      border-top:
+        2px solid #dc2626;
+
+      border-bottom:
+        2px solid #dc2626;
+
+      border-radius:
+        0 14px 14px 0;
+
       padding: 10px;
+
       color: #111827;
-      box-shadow: 0 0 30px rgba(220, 38, 38, 0.65);
+
+      box-shadow:
+        0 0 30px rgba(220, 38, 38, 0.65);
+
       text-align: center;
     }
 
-    .floating-calc-box.closed .floating-calc-content {
+
+    .floating-calc-box.closed
+    .floating-calc-content {
       display: none;
     }
 
+
     .mini-calc-title {
       font-weight: bold;
+
       color: #dc2626;
+
       margin-bottom: 8px;
+
       font-size: 15px;
     }
 
+
     .mini-calc-input {
       width: 100%;
+
       padding: 9px 8px;
+
       border-radius: 8px;
-      border: 1.5px solid #d1d5db;
+
+      border:
+        1.5px solid #d1d5db;
+
       text-align: center;
+
       font-size: 16px;
+
       font-weight: bold;
-      box-sizing: border-box;
     }
+
 
     .mini-calc-formula {
       margin-top: 8px;
+
       min-height: 45px;
+
       padding: 9px;
+
       border-radius: 8px;
+
       background: #ffffff;
-      border: 1px dashed #94a3b8;
+
+      border:
+        1px dashed #94a3b8;
+
       font-size: 14px;
+
       font-weight: bold;
+
       word-break: break-word;
+
       line-height: 1.4;
     }
 
+
     .mini-calc-formula.placeholder {
-      color: rgba(0, 0, 0, 0.45);
+      color:
+        rgba(0, 0, 0, 0.45);
     }
+
 
     .mini-calc-formula.answer {
       color: #b91c1c;
     }
 
+
     .mini-copy-btn {
       width: 100%;
+
       margin: 8px 0 0;
+
       padding: 8px 10px;
+
       font-size: 13px;
     }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
+
+    /* ========================================
+       RESPONSIVE
+    ======================================== */
+
+    @media (max-width: 900px) {
+
+      .admin-users-grid {
+        grid-template-columns:
+          repeat(4, minmax(0, 1fr));
       }
+
     }
 
-    @keyframes rain {
-      to {
-        transform: translateY(110vh) translateX(-20px);
+
+    @media (max-width: 700px) {
+
+      .admin-users-grid {
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
       }
+
     }
+
 
     @media (max-width: 600px) {
+
       body {
         padding: 12px;
       }
+
 
       .container {
         padding: 15px;
       }
 
+
       .normal-top-row {
         flex-direction: column;
+
         align-items: stretch;
       }
+
 
       .main-input-zone {
         max-width: 100%;
       }
 
+
       .input-row {
         flex-direction: column;
+
         gap: 8px;
       }
 
+
       .checkbox-inline {
-        position: static;
         width: auto;
+
         margin-top: 10px;
+
         justify-content: center;
       }
+
 
       .input-row input[type="text"],
       .input-row input {
         width: 100%;
+
         max-width: 100%;
       }
 
-      .checkbox-inline input {
-        width: auto !important;
-        max-width: none !important;
-      }
 
       textarea {
         width: 100%;
+
         font-size: 18px;
       }
+
 
       .preset-grid {
         grid-template-columns: 1fr;
       }
 
+
       .tab-btn {
         flex: 1;
       }
 
+
       .floating-calc-box {
         top: auto;
+
         bottom: 18px;
+
         left: 0;
-        right: auto;
       }
+
 
       .floating-calc-content {
         width: 190px;
       }
 
+
       .floating-calc-toggle {
         width: 40px;
       }
+
+
+      .admin-panel {
+        padding: 16px;
+      }
+
+
+      .admin-panel-title {
+        font-size: 21px;
+      }
+
+
+      .admin-users-grid {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+      }
+
+
+      .admin-user-mini-card {
+        min-height: 105px;
+      }
+
+
+      .user-detail-box {
+        padding: 19px;
+      }
+
+
+      .detail-input-row {
+        flex-direction: column;
+      }
+
+
+      .detail-eye-btn {
+        width: 100%;
+      }
+
     }
+
+
+    @media (max-width: 370px) {
+
+      .admin-users-grid {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
   </style>
 </head>
 
+
 <body>
-  <div class="container">
-    <div class="tabs">
-      <button class="tab-btn active" id="tab-normal" onclick="showPage('normal')">🎯 วินปกติ</button>
-      <button class="tab-btn" id="tab-multi" onclick="showPage('multi')">🔢 วินหลายชุด</button>
-      <button class="tab-btn" id="tab-preset" onclick="showPage('preset')">📦 ชุด</button>
-    </div>
 
-    <!-- หน้า 1 วินปกติ -->
-    <div class="page active" id="page-normal">
-      <h1>โปรแกรมวินเลข</h1>
 
-      <div class="normal-top-row">
-        <div class="main-input-zone">
-          <div class="input-row">
-            <input id="input" placeholder="กรอกตัวเลข..." oninput="handleInput(this)">
+  <!-- ========================================
+       LOGIN
+  ======================================== -->
 
-            <label class="checkbox-inline">
-              <input type="checkbox" id="allowSpace">
-              <span>ลากได้ทีละหลายชุด</span>
-            </label>
-          </div>
+  <div
+    id="loginScreen"
+    class="auth-screen"
+  >
 
-          <div class="buttons">
-            <button class="btn-main" onclick="generate()">วินเลข</button>
-            <button class="btn-secondary" onclick="run2()">ชุดลาก</button>
-            <button class="btn-danger" onclick="clearAll()">ล้าง</button>
-          </div>
+    <div class="auth-box">
 
-          <h4>ลากเลขหลายชุด ตัวอย่าง 12 34 56</h4>
-        </div>
+      <div class="auth-logo">
+        🎯
       </div>
 
-      <div id="result" class="result-box"></div>
-    </div>
+      <h2 class="auth-title">
+        โปรแกรมวินเลข
+      </h2>
 
-    <!-- หน้า 2 วินหลายชุด -->
-    <div class="page" id="page-multi">
-      <h1>วินหลายชุด</h1>
-
-      <textarea id="multiInput" placeholder="กรอกหลายชุด เช่น&#10;123456 23456&#10;หรือแยกบรรทัดก็ได้"></textarea>
-
-      <div class="hint">
-        ตัวอย่าง: 123456 23456<br>
-        ระบบจะแยกผลแต่ละชุด และปุ่มคัดลอกจะคัดลอกเฉพาะเลขเท่านั้น
+      <div class="auth-subtitle">
+        กรุณาเข้าสู่ระบบเพื่อใช้งาน
       </div>
 
-      <div class="buttons">
-        <button class="btn-main" onclick="generateMulti()">วินหลายชุด</button>
-        <button class="btn-danger" onclick="clearMulti()">ล้าง</button>
+
+      <div class="auth-group">
+
+        <label>
+          ชื่อผู้ใช้งาน
+        </label>
+
+        <input
+          id="loginUsername"
+          type="text"
+          placeholder="Username"
+          autocomplete="username"
+        >
+
       </div>
 
-      <div id="multiResult" class="result-box"></div>
-    </div>
 
-    <!-- หน้า 3 ชุดสำเร็จ -->
-    <div class="page" id="page-preset">
-      <h1>ชุดสำเร็จ</h1>
+      <div class="auth-group">
 
-      <div class="hint">
-        เลขแต่ละชุดจะซ่อนไว้ก่อน กด “แสดงเลข” เพื่อดู หรือกด “คัดลอก” เพื่อคัดลอกทันที
+        <label>
+          รหัสผ่าน
+        </label>
+
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="Password"
+          autocomplete="current-password"
+        >
+
       </div>
 
-      <div id="presetResult" class="result-box"></div>
+
+      <button
+        class="auth-login-btn"
+        onclick="loginUser()"
+      >
+        🔐 เข้าสู่ระบบ
+      </button>
+
+
+      <button
+        class="auth-register-btn"
+        onclick="showRegister()"
+      >
+        ✨ สมัครสมาชิก
+      </button>
+
+
+      <div
+        id="loginMessage"
+        class="auth-message"
+      ></div>
+
     </div>
+
   </div>
 
-  <!-- กล่องคำนวณเลขลอยด้านซ้าย -->
-  <div class="floating-calc-box" id="floatingCalcBox">
-    <button class="floating-calc-toggle" onclick="toggleFloatingCalc()">🧮</button>
 
-    <div class="floating-calc-content" id="floatingCalcContent">
-      <div class="mini-calc-title">คำนวณเลข</div>
+  <!-- ========================================
+       REGISTER
+  ======================================== -->
+
+  <div
+    id="registerScreen"
+    class="auth-screen hidden"
+  >
+
+    <div class="auth-box">
+
+      <div class="auth-logo">
+        📝
+      </div>
+
+
+      <h2 class="auth-title">
+        สมัครสมาชิก
+      </h2>
+
+
+      <div class="auth-subtitle">
+        สร้างบัญชีสำหรับเข้าใช้งานโปรแกรม
+      </div>
+
+
+      <div class="auth-group">
+
+        <label>
+          ชื่อผู้ใช้งาน
+        </label>
+
+        <input
+          id="registerUsername"
+          type="text"
+          placeholder="Username"
+        >
+
+      </div>
+
+
+      <div class="auth-group">
+
+        <label>
+          รหัสผ่าน
+        </label>
+
+        <input
+          id="registerPassword"
+          type="password"
+          placeholder="Password"
+        >
+
+      </div>
+
+
+      <div class="auth-group">
+
+        <label>
+          ยืนยันรหัสผ่าน
+        </label>
+
+        <input
+          id="registerPasswordConfirm"
+          type="password"
+          placeholder="Confirm Password"
+        >
+
+      </div>
+
+
+      <button
+        class="auth-login-btn"
+        onclick="registerUser()"
+      >
+        ✅ สมัครสมาชิก
+      </button>
+
+
+      <button
+        class="auth-back"
+        onclick="showLogin()"
+      >
+        ← กลับหน้าเข้าสู่ระบบ
+      </button>
+
+
+      <div
+        id="registerMessage"
+        class="auth-message"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================
+       MAIN PROGRAM
+  ======================================== -->
+
+  <div class="container">
+
+
+    <div class="user-bar">
+
+      👤
+
+      <span
+        id="currentUsername"
+        class="user-name"
+      ></span>
+
+
+      <button
+        class="logout-btn"
+        onclick="logoutUser()"
+      >
+        ออกจากระบบ
+      </button>
+
+    </div>
+
+
+    <div class="tabs">
+
+      <button
+        class="tab-btn active"
+        id="tab-normal"
+        onclick="showPage('normal')"
+      >
+        🎯 วินปกติ
+      </button>
+
+
+      <button
+        class="tab-btn"
+        id="tab-multi"
+        onclick="showPage('multi')"
+      >
+        🔢 วินหลายชุด
+      </button>
+
+
+      <button
+        class="tab-btn"
+        id="tab-preset"
+        onclick="showPage('preset')"
+      >
+        📦 ชุด
+      </button>
+
+
+      <!-- ADMIN ONLY -->
+
+      <button
+        class="tab-btn hidden"
+        id="adminManageBtn"
+        onclick="openAdminPanel()"
+      >
+        👑 จัดการสมาชิก
+      </button>
+
+    </div>
+
+
+    <!-- ========================================
+         NORMAL
+    ======================================== -->
+
+    <div
+      class="page active"
+      id="page-normal"
+    >
+
+      <h1>
+        โปรแกรมวินเลข
+      </h1>
+
+
+      <div class="normal-top-row">
+
+        <div class="main-input-zone">
+
+
+          <div class="input-row">
+
+            <input
+              id="input"
+              placeholder="กรอกตัวเลข..."
+              oninput="handleInput(this)"
+            >
+
+
+            <label class="checkbox-inline">
+
+              <input
+                type="checkbox"
+                id="allowSpace"
+              >
+
+              <span>
+                ลากได้ทีละหลายชุด
+              </span>
+
+            </label>
+
+          </div>
+
+
+          <div class="buttons">
+
+            <button
+              class="btn-main"
+              onclick="generate()"
+            >
+              วินเลข
+            </button>
+
+
+            <button
+              class="btn-secondary"
+              onclick="run2()"
+            >
+              ชุดลาก
+            </button>
+
+
+            <button
+              class="btn-danger"
+              onclick="clearAll()"
+            >
+              ล้าง
+            </button>
+
+          </div>
+
+
+          <h4>
+            ลากเลขหลายชุด ตัวอย่าง 12 34 56
+          </h4>
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="result"
+        class="result-box"
+      ></div>
+
+    </div>
+
+
+    <!-- ========================================
+         MULTI
+    ======================================== -->
+
+    <div
+      class="page"
+      id="page-multi"
+    >
+
+      <h1>
+        วินหลายชุด
+      </h1>
+
+
+      <textarea
+        id="multiInput"
+        placeholder="กรอกหลายชุด เช่น&#10;123456 23456&#10;หรือแยกบรรทัดก็ได้"
+      ></textarea>
+
+
+      <div class="hint">
+
+        ตัวอย่าง: 123456 23456
+
+        <br>
+
+        ระบบจะแยกผลแต่ละชุด
+        และปุ่มคัดลอกจะคัดลอกเฉพาะเลขเท่านั้น
+
+      </div>
+
+
+      <div class="buttons">
+
+        <button
+          class="btn-main"
+          onclick="generateMulti()"
+        >
+          วินหลายชุด
+        </button>
+
+
+        <button
+          class="btn-danger"
+          onclick="clearMulti()"
+        >
+          ล้าง
+        </button>
+
+      </div>
+
+
+      <div
+        id="multiResult"
+        class="result-box"
+      ></div>
+
+    </div>
+
+
+    <!-- ========================================
+         PRESET
+    ======================================== -->
+
+    <div
+      class="page"
+      id="page-preset"
+    >
+
+      <h1>
+        ชุดสำเร็จ
+      </h1>
+
+
+      <div class="hint">
+
+        เลขแต่ละชุดจะซ่อนไว้ก่อน
+        กด “แสดงเลข” เพื่อดู
+        หรือกด “คัดลอก”
+        เพื่อคัดลอกทันที
+
+      </div>
+
+
+      <div
+        id="presetResult"
+        class="result-box"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================
+       ADMIN PANEL
+  ======================================== -->
+
+  <div
+    id="adminPanel"
+    class="admin-overlay hidden"
+  >
+
+    <div class="admin-panel">
+
+
+      <div class="admin-panel-header">
+
+        <div>
+
+          <div class="admin-panel-title">
+            👑 จัดการสมาชิก
+          </div>
+
+          <div class="admin-panel-subtitle">
+            กดที่กล่องสมาชิกเพื่อดูและแก้ไขรายละเอียด
+          </div>
+
+        </div>
+
+
+        <button
+          class="admin-close-btn"
+          onclick="closeAdminPanel()"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+      <div class="admin-summary">
+
+        <span>
+          👥 สมาชิกทั้งหมด
+        </span>
+
+        <span
+          id="adminUserCount"
+          class="admin-summary-number"
+        >
+          0
+        </span>
+
+      </div>
+
+
+      <div
+        id="adminUserGrid"
+        class="admin-users-grid"
+      ></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================
+       USER DETAIL
+  ======================================== -->
+
+  <div
+    id="userDetailOverlay"
+    class="user-detail-overlay hidden"
+  >
+
+    <div class="user-detail-box">
+
+
+      <div class="detail-header">
+
+
+        <div class="detail-user-info">
+
+          <div class="detail-avatar">
+            👤
+          </div>
+
+
+          <div>
+
+            <div
+              id="detailDisplayUsername"
+              class="detail-title"
+            >
+              user
+            </div>
+
+            <div class="detail-subtitle">
+              รายละเอียดสมาชิก
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <button
+          class="detail-close"
+          onclick="closeUserDetail()"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+      <!-- USERNAME -->
+
+      <div class="detail-section">
+
+        <label class="detail-label">
+          👤 Username
+        </label>
+
+        <input
+          id="detailUsername"
+          class="detail-input"
+          type="text"
+          readonly
+        >
+
+      </div>
+
+
+      <!-- CURRENT PASSWORD -->
+
+      <div class="detail-section">
+
+        <label class="detail-label">
+          🔐 รหัสผ่านปัจจุบัน
+        </label>
+
+
+        <div class="detail-input-row">
+
+          <input
+            id="detailPassword"
+            class="detail-input"
+            type="password"
+            readonly
+          >
+
+
+          <button
+            id="detailPasswordToggle"
+            class="detail-eye-btn"
+            onclick="toggleDetailPassword()"
+          >
+            👁 ดู
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- NEW PASSWORD -->
+
+      <div class="detail-section">
+
+        <label class="detail-label">
+          🔑 ตั้งรหัสผ่านใหม่
+        </label>
+
+
+        <input
+          id="detailNewPassword"
+          class="detail-input"
+          type="text"
+          placeholder="กรอกรหัสผ่านใหม่..."
+        >
+
+      </div>
+
+
+      <button
+        class="detail-save-btn"
+        onclick="saveDetailPassword()"
+      >
+        💾 บันทึกรหัสผ่านใหม่
+      </button>
+
+
+      <!-- CREATED -->
+
+      <div class="detail-info-box">
+
+        <span style="font-size:22px;">
+          📅
+        </span>
+
+        <div>
+
+          <b>
+            สมัครเมื่อ
+          </b>
+
+          <div
+            id="detailCreatedAt"
+            style="margin-top:3px;"
+          >
+            -
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- DELETE -->
+
+      <button
+        id="detailDeleteBtn"
+        class="detail-delete-btn"
+        onclick="deleteCurrentUser()"
+      >
+        🗑️ ลบสมาชิก
+      </button>
+
+
+      <div
+        id="detailAdminProtect"
+        class="admin-protect-text hidden"
+      >
+        🔒 บัญชี admin ไม่สามารถลบได้
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================
+       MINI CALCULATOR
+  ======================================== -->
+
+  <div
+    class="floating-calc-box"
+    id="floatingCalcBox"
+  >
+
+    <button
+      class="floating-calc-toggle"
+      onclick="toggleFloatingCalc()"
+    >
+      🧮
+    </button>
+
+
+    <div
+      class="floating-calc-content"
+    >
+
+      <div class="mini-calc-title">
+        คำนวณเลข
+      </div>
+
 
       <input
         id="miniCalcInput"
@@ -570,147 +2537,1647 @@
         placeholder="เช่น 1+1 หรือ 1+1-2"
       >
 
-      <div id="miniCalcFormula" class="mini-calc-formula placeholder">
+
+      <div
+        id="miniCalcFormula"
+        class="mini-calc-formula placeholder"
+      >
         กรอกเช่น 1+1 หรือ 1+1-2
       </div>
 
-      <button class="copy mini-copy-btn" onclick="copyMiniCalc()">
+
+      <button
+        class="copy mini-copy-btn"
+        onclick="copyMiniCalc()"
+      >
         คัดลอก
       </button>
+
     </div>
+
   </div>
 
+
   <script>
+
+    /* ========================================
+       GLOBAL
+    ======================================== */
+
     let allText = '';
+
     let miniCalcText = '';
 
+    let selectedAdminUserKey = null;
+
+
     window.multiCopyData = {};
+
     window.presetCopyData = {};
 
-    function uniqueCombo(arr, size) {
-      const result = [];
 
-      function helper(start, path) {
-        if (path.length === size) {
-          result.push(path.join(''));
-          return;
-        }
+    /* ========================================
+       USER STORAGE
+    ======================================== */
 
-        for (let i = start; i < arr.length; i++) {
-          path.push(arr[i]);
-          helper(i + 1, path);
-          path.pop();
-        }
-      }
-
-      helper(0, []);
-      return result;
-    }
-
-    function comboWithRepeat(arr, size) {
-      const result = [];
-
-      function helper(start, path) {
-        if (path.length === size) {
-          result.push(path.join(''));
-          return;
-        }
-
-        for (let i = start; i < arr.length; i++) {
-          path.push(arr[i]);
-          helper(i, path);
-          path.pop();
-        }
-      }
-
-      helper(0, []);
-      return result;
-    }
-
-    function showPage(page) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
-      document.getElementById('page-' + page).classList.add('active');
-      document.getElementById('tab-' + page).classList.add('active');
-
-      if (page === 'preset') {
-        renderPresetSets();
-      }
-    }
-
-    function copy(text) {
-      if (!text) return;
-
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => {
-          showToast("คัดลอกแล้ว");
-        }).catch(() => {
-          fallbackCopy(text);
-        });
-      } else {
-        fallbackCopy(text);
-      }
-    }
-
-    function fallbackCopy(text) {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.left = '-9999px';
-      ta.style.top = '-9999px';
-      document.body.appendChild(ta);
-
-      ta.focus();
-      ta.select();
-      ta.setSelectionRange(0, 999999);
+    function getUsers() {
 
       try {
-        document.execCommand('copy');
-        showToast("คัดลอกแล้ว");
-      } catch (e) {
-        alert("คัดลอกไม่ได้ กรุณากดค้างแล้วคัดลอกเอง");
+
+        return JSON.parse(
+          localStorage.getItem(
+            'winNumberUsers'
+          )
+        ) || {};
+
+      } catch (error) {
+
+        return {};
+
       }
 
-      document.body.removeChild(ta);
     }
 
-    function copyAll() {
-      if (!allText) return;
-      copy(allText);
+
+    function saveUsers(users) {
+
+      localStorage.setItem(
+        'winNumberUsers',
+        JSON.stringify(users)
+      );
+
     }
 
-    function copyMulti(key) {
-      copy(window.multiCopyData[key] || '');
+
+    /* ========================================
+       DEFAULT ADMIN
+    ======================================== */
+
+    function createDefaultAdmin() {
+
+      const users = getUsers();
+
+
+      if (!users.admin) {
+
+        users.admin = {
+
+          username: 'admin',
+
+          password: 'admin1234',
+
+          createdAt:
+            new Date().toISOString()
+
+        };
+
+
+        saveUsers(users);
+
+      }
+
     }
 
-    function copyPreset(key) {
-      copy(window.presetCopyData[key] || '');
+
+    /* ========================================
+       LOGIN / REGISTER
+    ======================================== */
+
+    function showLogin() {
+
+      document
+        .getElementById('registerScreen')
+        .classList
+        .add('hidden');
+
+
+      document
+        .getElementById('loginScreen')
+        .classList
+        .remove('hidden');
+
+
+      document
+        .getElementById('registerMessage')
+        .innerText = '';
+
     }
 
-    function showToast(msg) {
-      const noti = document.createElement('div');
-      noti.className = "toast";
-      noti.innerText = msg;
-      document.body.appendChild(noti);
+
+    function showRegister() {
+
+      document
+        .getElementById('loginScreen')
+        .classList
+        .add('hidden');
+
+
+      document
+        .getElementById('registerScreen')
+        .classList
+        .remove('hidden');
+
+
+      document
+        .getElementById('registerUsername')
+        .value = '';
+
+
+      document
+        .getElementById('registerPassword')
+        .value = '';
+
+
+      document
+        .getElementById('registerPasswordConfirm')
+        .value = '';
+
+
+      document
+        .getElementById('registerMessage')
+        .innerText = '';
+
+    }
+
+
+    function registerUser() {
+
+      const username =
+        document
+          .getElementById('registerUsername')
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById('registerPassword')
+          .value;
+
+
+      const confirmPassword =
+        document
+          .getElementById('registerPasswordConfirm')
+          .value;
+
+
+      const message =
+        document
+          .getElementById('registerMessage');
+
+
+      message.className =
+        'auth-message error';
+
+
+      if (!username) {
+
+        message.innerText =
+          'กรุณากรอกชื่อผู้ใช้งาน';
+
+        return;
+
+      }
+
+
+      if (username.length < 3) {
+
+        message.innerText =
+          'ชื่อผู้ใช้งานต้องมีอย่างน้อย 3 ตัว';
+
+        return;
+
+      }
+
+
+      if (username === 'admin') {
+
+        message.innerText =
+          'ไม่สามารถสมัครชื่อ admin ได้';
+
+        return;
+
+      }
+
+
+      if (!password) {
+
+        message.innerText =
+          'กรุณากรอกรหัสผ่าน';
+
+        return;
+
+      }
+
+
+      if (password.length < 4) {
+
+        message.innerText =
+          'รหัสผ่านต้องมีอย่างน้อย 4 ตัว';
+
+        return;
+
+      }
+
+
+      if (
+        password !==
+        confirmPassword
+      ) {
+
+        message.innerText =
+          'รหัสผ่านทั้งสองช่องไม่ตรงกัน';
+
+        return;
+
+      }
+
+
+      const users =
+        getUsers();
+
+
+      if (users[username]) {
+
+        message.innerText =
+          'Username นี้มีผู้ใช้งานแล้ว';
+
+        return;
+
+      }
+
+
+      users[username] = {
+
+        username: username,
+
+        password: password,
+
+        createdAt:
+          new Date().toISOString()
+
+      };
+
+
+      saveUsers(users);
+
+
+      message.className =
+        'auth-message success';
+
+
+      message.innerText =
+        'สมัครสมาชิกสำเร็จ';
+
 
       setTimeout(() => {
-        noti.remove();
-      }, 2000);
+
+        showLogin();
+
+
+        document
+          .getElementById('loginUsername')
+          .value =
+          username;
+
+
+        document
+          .getElementById('loginPassword')
+          .focus();
+
+      }, 700);
+
     }
 
-    function block(title, data) {
-      const str = data.join('-');
-      const is3 = data[0]?.length === 3;
-      const key = 'normal_' + Math.random().toString(36).slice(2);
 
-      window.multiCopyData[key] = str;
+    function loginUser() {
+
+      const username =
+        document
+          .getElementById('loginUsername')
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById('loginPassword')
+          .value;
+
+
+      const message =
+        document
+          .getElementById('loginMessage');
+
+
+      message.className =
+        'auth-message error';
+
+
+      if (
+        !username ||
+        !password
+      ) {
+
+        message.innerText =
+          'กรุณากรอก Username และ Password';
+
+        return;
+
+      }
+
+
+      const users =
+        getUsers();
+
+
+      const user =
+        users[username];
+
+
+      if (!user) {
+
+        message.innerText =
+          'ไม่พบ Username นี้';
+
+        return;
+
+      }
+
+
+      if (
+        user.password !==
+        password
+      ) {
+
+        message.innerText =
+          'รหัสผ่านไม่ถูกต้อง';
+
+        return;
+
+      }
+
+
+      localStorage.setItem(
+        'winNumberLoggedIn',
+        user.username
+      );
+
+
+      enterProgram(
+        user.username
+      );
+
+    }
+
+
+    function enterProgram(username) {
+
+      document
+        .getElementById('loginScreen')
+        .classList
+        .add('hidden');
+
+
+      document
+        .getElementById('registerScreen')
+        .classList
+        .add('hidden');
+
+
+      document
+        .getElementById('currentUsername')
+        .innerText =
+        username;
+
+
+      const adminBtn =
+        document
+          .getElementById('adminManageBtn');
+
+
+      if (
+        username === 'admin'
+      ) {
+
+        adminBtn
+          .classList
+          .remove('hidden');
+
+      } else {
+
+        adminBtn
+          .classList
+          .add('hidden');
+
+      }
+
+    }
+
+
+    function logoutUser() {
+
+      localStorage.removeItem(
+        'winNumberLoggedIn'
+      );
+
+
+      closeAdminPanel();
+
+      closeUserDetail();
+
+
+      document
+        .getElementById('adminManageBtn')
+        .classList
+        .add('hidden');
+
+
+      document
+        .getElementById('loginPassword')
+        .value = '';
+
+
+      document
+        .getElementById('loginMessage')
+        .innerText = '';
+
+
+      document
+        .getElementById('loginScreen')
+        .classList
+        .remove('hidden');
+
+    }
+
+
+    function checkLogin() {
+
+      const logged =
+        localStorage.getItem(
+          'winNumberLoggedIn'
+        );
+
+
+      if (!logged) {
+
+        showLogin();
+
+        return;
+
+      }
+
+
+      const users =
+        getUsers();
+
+
+      if (!users[logged]) {
+
+        localStorage.removeItem(
+          'winNumberLoggedIn'
+        );
+
+
+        showLogin();
+
+        return;
+
+      }
+
+
+      enterProgram(logged);
+
+    }
+
+
+    /* ========================================
+       ADMIN CHECK
+    ======================================== */
+
+    function isAdmin() {
+
+      return (
+        localStorage.getItem(
+          'winNumberLoggedIn'
+        ) === 'admin'
+      );
+
+    }
+
+
+    /* ========================================
+       ADMIN PANEL
+    ======================================== */
+
+    function openAdminPanel() {
+
+      if (!isAdmin()) {
+
+        alert(
+          'คุณไม่มีสิทธิ์ใช้งาน'
+        );
+
+        return;
+
+      }
+
+
+      renderAdminUsers();
+
+
+      document
+        .getElementById('adminPanel')
+        .classList
+        .remove('hidden');
+
+    }
+
+
+    function closeAdminPanel() {
+
+      document
+        .getElementById('adminPanel')
+        ?.classList
+        .add('hidden');
+
+    }
+
+
+    /* ========================================
+       ESCAPE HTML
+    ======================================== */
+
+    function escapeHtml(text) {
+
+      return String(text)
+
+        .replaceAll(
+          '&',
+          '&amp;'
+        )
+
+        .replaceAll(
+          '<',
+          '&lt;'
+        )
+
+        .replaceAll(
+          '>',
+          '&gt;'
+        )
+
+        .replaceAll(
+          '"',
+          '&quot;'
+        )
+
+        .replaceAll(
+          "'",
+          '&#039;'
+        );
+
+    }
+
+
+    /* ========================================
+       ADMIN USER GRID
+    ======================================== */
+
+    function renderAdminUsers() {
+
+      if (!isAdmin()) {
+
+        return;
+
+      }
+
+
+      const users =
+        getUsers();
+
+
+      const keys =
+        Object.keys(users);
+
+
+      const grid =
+        document
+          .getElementById(
+            'adminUserGrid'
+          );
+
+
+      document
+        .getElementById(
+          'adminUserCount'
+        )
+        .innerText =
+        keys.length;
+
+
+      if (
+        keys.length === 0
+      ) {
+
+        grid.innerHTML = `
+
+          <div
+            style="
+              grid-column:1/-1;
+              padding:30px;
+              color:#64748b;
+            "
+          >
+            ยังไม่มีสมาชิก
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      /*
+        admin ขึ้นก่อน
+      */
+
+      keys.sort(
+        (a, b) => {
+
+          if (a === 'admin') return -1;
+
+          if (b === 'admin') return 1;
+
+          return a.localeCompare(b);
+
+        }
+      );
+
+
+      let html = '';
+
+
+      keys.forEach(
+        (key) => {
+
+          const user =
+            users[key];
+
+
+          const safeUsername =
+            escapeHtml(
+              user.username
+            );
+
+
+          const encodedKey =
+            encodeURIComponent(key);
+
+
+          html += `
+
+            <div
+              class="
+                admin-user-mini-card
+                ${
+                  user.username === 'admin'
+                    ? 'admin-card'
+                    : ''
+                }
+              "
+              onclick="
+                openUserDetail(
+                  '${encodedKey}'
+                )
+              "
+              title="
+                กดเพื่อดูข้อมูล ${safeUsername}
+              "
+            >
+
+              ${
+                user.username === 'admin'
+                ?
+                `
+                  <div class="admin-mini-badge">
+                    ADMIN
+                  </div>
+                `
+                :
+                ''
+              }
+
+
+              <div class="admin-user-avatar">
+
+                ${
+                  user.username === 'admin'
+                    ? '👑'
+                    : '👤'
+                }
+
+              </div>
+
+
+              <div class="admin-mini-username">
+                ${safeUsername}
+              </div>
+
+
+              <div class="admin-card-hint">
+                กดเพื่อดู
+              </div>
+
+            </div>
+
+          `;
+
+        }
+      );
+
+
+      grid.innerHTML =
+        html;
+
+    }
+
+
+    /* ========================================
+       OPEN USER DETAIL
+    ======================================== */
+
+    function openUserDetail(
+      encodedKey
+    ) {
+
+      if (!isAdmin()) {
+
+        return;
+
+      }
+
+
+      const key =
+        decodeURIComponent(
+          encodedKey
+        );
+
+
+      const users =
+        getUsers();
+
+
+      const user =
+        users[key];
+
+
+      if (!user) {
+
+        alert(
+          'ไม่พบสมาชิก'
+        );
+
+        return;
+
+      }
+
+
+      selectedAdminUserKey =
+        key;
+
+
+      document
+        .getElementById(
+          'detailDisplayUsername'
+        )
+        .innerText =
+        user.username;
+
+
+      document
+        .getElementById(
+          'detailUsername'
+        )
+        .value =
+        user.username;
+
+
+      const passwordInput =
+        document
+          .getElementById(
+            'detailPassword'
+          );
+
+
+      passwordInput.type =
+        'password';
+
+
+      passwordInput.value =
+        user.password;
+
+
+      document
+        .getElementById(
+          'detailPasswordToggle'
+        )
+        .innerText =
+        '👁 ดู';
+
+
+      document
+        .getElementById(
+          'detailNewPassword'
+        )
+        .value =
+        '';
+
+
+      let dateText = '-';
+
+
+      if (
+        user.createdAt
+      ) {
+
+        try {
+
+          dateText =
+            new Date(
+              user.createdAt
+            )
+            .toLocaleString(
+              'th-TH',
+              {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+              }
+            );
+
+        } catch (error) {
+
+          dateText =
+            user.createdAt;
+
+        }
+
+      }
+
+
+      document
+        .getElementById(
+          'detailCreatedAt'
+        )
+        .innerText =
+        dateText;
+
+
+      const deleteBtn =
+        document
+          .getElementById(
+            'detailDeleteBtn'
+          );
+
+
+      const protectText =
+        document
+          .getElementById(
+            'detailAdminProtect'
+          );
+
+
+      if (
+        user.username === 'admin'
+      ) {
+
+        deleteBtn.disabled =
+          true;
+
+
+        deleteBtn.innerText =
+          '🔒 ไม่สามารถลบ admin ได้';
+
+
+        protectText
+          .classList
+          .remove('hidden');
+
+      } else {
+
+        deleteBtn.disabled =
+          false;
+
+
+        deleteBtn.innerText =
+          '🗑️ ลบสมาชิก';
+
+
+        protectText
+          .classList
+          .add('hidden');
+
+      }
+
+
+      document
+        .getElementById(
+          'userDetailOverlay'
+        )
+        .classList
+        .remove('hidden');
+
+    }
+
+
+    function closeUserDetail() {
+
+      selectedAdminUserKey =
+        null;
+
+
+      document
+        .getElementById(
+          'userDetailOverlay'
+        )
+        ?.classList
+        .add('hidden');
+
+    }
+
+
+    /* ========================================
+       PASSWORD SHOW
+    ======================================== */
+
+    function toggleDetailPassword() {
+
+      if (!isAdmin()) {
+
+        return;
+
+      }
+
+
+      const input =
+        document
+          .getElementById(
+            'detailPassword'
+          );
+
+
+      const btn =
+        document
+          .getElementById(
+            'detailPasswordToggle'
+          );
+
+
+      if (
+        input.type === 'password'
+      ) {
+
+        input.type =
+          'text';
+
+
+        btn.innerText =
+          '🙈 ซ่อน';
+
+      } else {
+
+        input.type =
+          'password';
+
+
+        btn.innerText =
+          '👁 ดู';
+
+      }
+
+    }
+
+
+    /* ========================================
+       SAVE NEW PASSWORD
+    ======================================== */
+
+    function saveDetailPassword() {
+
+      if (!isAdmin()) {
+
+        alert(
+          'คุณไม่มีสิทธิ์ใช้งาน'
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !selectedAdminUserKey
+      ) {
+
+        return;
+
+      }
+
+
+      const input =
+        document
+          .getElementById(
+            'detailNewPassword'
+          );
+
+
+      const newPassword =
+        input.value;
+
+
+      if (!newPassword) {
+
+        alert(
+          'กรุณากรอกรหัสผ่านใหม่'
+        );
+
+        return;
+
+      }
+
+
+      if (
+        newPassword.length < 4
+      ) {
+
+        alert(
+          'รหัสผ่านต้องมีอย่างน้อย 4 ตัว'
+        );
+
+        return;
+
+      }
+
+
+      const users =
+        getUsers();
+
+
+      const user =
+        users[
+          selectedAdminUserKey
+        ];
+
+
+      if (!user) {
+
+        alert(
+          'ไม่พบสมาชิก'
+        );
+
+        closeUserDetail();
+
+        renderAdminUsers();
+
+        return;
+
+      }
+
+
+      const confirmChange =
+        confirm(
+          `ต้องการเปลี่ยนรหัสผ่านของ "${user.username}" ใช่หรือไม่?`
+        );
+
+
+      if (!confirmChange) {
+
+        return;
+
+      }
+
+
+      user.password =
+        newPassword;
+
+
+      saveUsers(users);
+
+
+      document
+        .getElementById(
+          'detailPassword'
+        )
+        .value =
+        newPassword;
+
+
+      document
+        .getElementById(
+          'detailPassword'
+        )
+        .type =
+        'password';
+
+
+      document
+        .getElementById(
+          'detailPasswordToggle'
+        )
+        .innerText =
+        '👁 ดู';
+
+
+      input.value =
+        '';
+
+
+      showToast(
+        `เปลี่ยนรหัสผ่าน ${user.username} สำเร็จ`
+      );
+
+    }
+
+
+    /* ========================================
+       DELETE MEMBER
+    ======================================== */
+
+    function deleteCurrentUser() {
+
+      if (!isAdmin()) {
+
+        alert(
+          'คุณไม่มีสิทธิ์ใช้งาน'
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !selectedAdminUserKey
+      ) {
+
+        return;
+
+      }
+
+
+      const users =
+        getUsers();
+
+
+      const user =
+        users[
+          selectedAdminUserKey
+        ];
+
+
+      if (!user) {
+
+        alert(
+          'ไม่พบสมาชิก'
+        );
+
+        return;
+
+      }
+
+
+      if (
+        user.username === 'admin'
+      ) {
+
+        alert(
+          'ไม่สามารถลบบัญชี admin ได้'
+        );
+
+        return;
+
+      }
+
+
+      const username =
+        user.username;
+
+
+      const confirmDelete =
+        confirm(
+          `ยืนยันลบสมาชิก "${username}" ?\n\nเมื่อลบแล้วบัญชีนี้จะไม่สามารถเข้าสู่ระบบได้`
+        );
+
+
+      if (!confirmDelete) {
+
+        return;
+
+      }
+
+
+      delete users[
+        selectedAdminUserKey
+      ];
+
+
+      saveUsers(users);
+
+
+      closeUserDetail();
+
+
+      renderAdminUsers();
+
+
+      showToast(
+        `ลบสมาชิก ${username} สำเร็จ`
+      );
+
+    }
+
+
+    /* ========================================
+       COMBINATION FUNCTIONS
+    ======================================== */
+
+    function uniqueCombo(
+      arr,
+      size
+    ) {
+
+      const result = [];
+
+
+      function helper(
+        start,
+        path
+      ) {
+
+        if (
+          path.length === size
+        ) {
+
+          result.push(
+            path.join('')
+          );
+
+          return;
+
+        }
+
+
+        for (
+          let i = start;
+          i < arr.length;
+          i++
+        ) {
+
+          path.push(
+            arr[i]
+          );
+
+
+          helper(
+            i + 1,
+            path
+          );
+
+
+          path.pop();
+
+        }
+
+      }
+
+
+      helper(
+        0,
+        []
+      );
+
+
+      return result;
+
+    }
+
+
+    function comboWithRepeat(
+      arr,
+      size
+    ) {
+
+      const result = [];
+
+
+      function helper(
+        start,
+        path
+      ) {
+
+        if (
+          path.length === size
+        ) {
+
+          result.push(
+            path.join('')
+          );
+
+          return;
+
+        }
+
+
+        for (
+          let i = start;
+          i < arr.length;
+          i++
+        ) {
+
+          path.push(
+            arr[i]
+          );
+
+
+          helper(
+            i,
+            path
+          );
+
+
+          path.pop();
+
+        }
+
+      }
+
+
+      helper(
+        0,
+        []
+      );
+
+
+      return result;
+
+    }
+
+
+    /* ========================================
+       PAGE SWITCH
+    ======================================== */
+
+    function showPage(page) {
+
+      document
+        .querySelectorAll(
+          '.page'
+        )
+        .forEach(
+          p => p
+            .classList
+            .remove('active')
+        );
+
+
+      document
+        .querySelectorAll(
+          '.tab-btn'
+        )
+        .forEach(
+          b => b
+            .classList
+            .remove('active')
+        );
+
+
+      document
+        .getElementById(
+          'page-' + page
+        )
+        .classList
+        .add('active');
+
+
+      document
+        .getElementById(
+          'tab-' + page
+        )
+        .classList
+        .add('active');
+
+
+      if (
+        page === 'preset'
+      ) {
+
+        renderPresetSets();
+
+      }
+
+    }
+
+
+    /* ========================================
+       COPY
+    ======================================== */
+
+    function copy(text) {
+
+      if (!text) {
+
+        return;
+
+      }
+
+
+      if (
+        navigator.clipboard &&
+        window.isSecureContext
+      ) {
+
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+
+            showToast(
+              'คัดลอกแล้ว'
+            );
+
+          })
+          .catch(() => {
+
+            fallbackCopy(text);
+
+          });
+
+      } else {
+
+        fallbackCopy(text);
+
+      }
+
+    }
+
+
+    function fallbackCopy(text) {
+
+      const ta =
+        document.createElement(
+          'textarea'
+        );
+
+
+      ta.value =
+        text;
+
+
+      ta.style.position =
+        'fixed';
+
+
+      ta.style.left =
+        '-9999px';
+
+
+      document.body
+        .appendChild(ta);
+
+
+      ta.focus();
+
+      ta.select();
+
+
+      try {
+
+        document.execCommand(
+          'copy'
+        );
+
+
+        showToast(
+          'คัดลอกแล้ว'
+        );
+
+      } catch (error) {
+
+        alert(
+          'ไม่สามารถคัดลอกได้'
+        );
+
+      }
+
+
+      ta.remove();
+
+    }
+
+
+    function copyAll() {
+
+      copy(allText);
+
+    }
+
+
+    function copyMulti(key) {
+
+      copy(
+        window.multiCopyData[key] ||
+        ''
+      );
+
+    }
+
+
+    function copyPreset(key) {
+
+      copy(
+        window.presetCopyData[key] ||
+        ''
+      );
+
+    }
+
+
+    function showToast(message) {
+
+      const toast =
+        document.createElement(
+          'div'
+        );
+
+
+      toast.className =
+        'toast';
+
+
+      toast.innerText =
+        message;
+
+
+      document.body
+        .appendChild(toast);
+
+
+      setTimeout(
+        () => toast.remove(),
+        2000
+      );
+
+    }
+
+
+    /* ========================================
+       RESULT BLOCK
+    ======================================== */
+
+    function block(
+      title,
+      data
+    ) {
+
+      const str =
+        data.join('-');
+
+
+      const is3 =
+        data[0]?.length === 3;
+
+
+      const key =
+        'normal_' +
+        Math.random()
+          .toString(36)
+          .slice(2);
+
+
+      window.multiCopyData[
+        key
+      ] =
+        str;
+
 
       return `
-        <div class="block">
-          <div class="title">${title}</div>
 
-          <div class="numbers ${is3 ? 'num3' : 'num2'}">
+        <div class="block">
+
+          <div class="title">
+            ${title}
+          </div>
+
+          <div
+            class="
+              numbers
+              ${
+                is3
+                ? 'num3'
+                : 'num2'
+              }
+            "
+          >
             ${str}
           </div>
 
@@ -718,602 +4185,1733 @@
             (รวม ${data.length} ชุด)
           </div>
 
-          <button class="copy" onclick="copyMulti('${key}')">คัดลอก</button>
+          <button
+            class="copy"
+            onclick="
+              copyMulti(
+                '${key}'
+              )
+            "
+          >
+            คัดลอก
+          </button>
+
         </div>
+
       `;
+
     }
 
-    function multiBlock(title, items, copyId) {
+
+    function multiBlock(
+      title,
+      items,
+      copyId
+    ) {
+
       let copyText = [];
 
+
       let html = `
+
         <div class="block">
-          <div class="title">${title}</div>
+
+          <div class="title">
+            ${title}
+          </div>
+
       `;
 
-      items.forEach(item => {
-        copyText.push(item.text);
 
-        html += `
-          <div class="sub-title">ชุดของ ${item.source}</div>
+      items.forEach(
+        item => {
 
-          <div class="numbers ${item.is3 ? 'num3' : 'num2'}">
-            ${item.text}
-          </div>
+          copyText.push(
+            item.text
+          );
 
-          <div class="count-text">
-            (รวม ${item.count} ชุด)
-          </div>
-        `;
-      });
 
-      window.multiCopyData[copyId] = copyText.join('\n');
+          html += `
+
+            <div class="sub-title">
+              ชุดของ ${item.source}
+            </div>
+
+            <div
+              class="
+                numbers
+                ${
+                  item.is3
+                    ? 'num3'
+                    : 'num2'
+                }
+              "
+            >
+              ${item.text}
+            </div>
+
+            <div class="count-text">
+              (รวม ${item.count} ชุด)
+            </div>
+
+          `;
+
+        }
+      );
+
+
+      window.multiCopyData[
+        copyId
+      ] =
+        copyText.join('\n');
+
 
       html += `
-          <button class="copy" onclick="copyMulti('${copyId}')">คัดลอก</button>
+
+          <button
+            class="copy"
+            onclick="
+              copyMulti(
+                '${copyId}'
+              )
+            "
+          >
+            คัดลอก
+          </button>
+
         </div>
+
       `;
 
+
       return html;
+
     }
+
+
+    /* ========================================
+       GENERATE NORMAL
+    ======================================== */
 
     function generate() {
+
       showLoader();
 
-      setTimeout(() => {
-        const val = document.getElementById('input').value;
 
-        if (val.length < 3) {
+      setTimeout(() => {
+
+        const val =
+          document
+            .getElementById(
+              'input'
+            )
+            .value;
+
+
+        if (
+          val.length < 3
+        ) {
+
           hideLoader();
-          return alert('ต้องมีอย่างน้อย 3 ตัว');
+
+
+          alert(
+            'ต้องมีอย่างน้อย 3 ตัว'
+          );
+
+
+          return;
+
         }
 
-        const arr = val.split('');
 
-        const c2 = uniqueCombo(arr, 2);
-        const c3 = uniqueCombo(arr, 3);
-        const c2d = comboWithRepeat(arr, 2);
-        const c3d = comboWithRepeat(arr, 3);
+        const arr =
+          val.split('');
 
-        document.getElementById('result').innerHTML =
-          `<div class="result-inner">
-            ${block('2 ตัว ไม่เบิ้ล', c2)}
-            ${block('3 ตัว ไม่เบิ้ล', c3)}
-            ${block('2 ตัว รวมเบิ้ล', c2d)}
-            ${block('3 ตัว รวมเบิ้ล', c3d)}
-          </div>`;
 
-        allText = [...c2, ...c3, ...c2d, ...c3d].join('-');
+        const c2 =
+          uniqueCombo(
+            arr,
+            2
+          );
+
+
+        const c3 =
+          uniqueCombo(
+            arr,
+            3
+          );
+
+
+        const c2d =
+          comboWithRepeat(
+            arr,
+            2
+          );
+
+
+        const c3d =
+          comboWithRepeat(
+            arr,
+            3
+          );
+
+
+        document
+          .getElementById(
+            'result'
+          )
+          .innerHTML = `
+
+            <div class="result-inner">
+
+              ${block(
+                '2 ตัว ไม่เบิ้ล',
+                c2
+              )}
+
+              ${block(
+                '3 ตัว ไม่เบิ้ล',
+                c3
+              )}
+
+              ${block(
+                '2 ตัว รวมเบิ้ล',
+                c2d
+              )}
+
+              ${block(
+                '3 ตัว รวมเบิ้ล',
+                c3d
+              )}
+
+            </div>
+
+          `;
+
+
+        allText =
+          [
+            ...c2,
+            ...c3,
+            ...c2d,
+            ...c3d
+          ]
+          .join('-');
+
 
         hideLoader();
+
       }, 300);
+
     }
+
+
+    /* ========================================
+       RUN 2
+    ======================================== */
 
     function run2() {
+
       showLoader();
 
-      setTimeout(() => {
-        const val = document.getElementById('input').value.trim();
-        const inputs = val.split(/[\s,]+/).filter(n => n.length === 2 && !isNaN(n));
 
-        if (inputs.length === 0) {
+      setTimeout(() => {
+
+        const val =
+          document
+            .getElementById(
+              'input'
+            )
+            .value
+            .trim();
+
+
+        const inputs =
+          val
+            .split(/[\s,]+/)
+            .filter(
+              n =>
+                n.length === 2 &&
+                !isNaN(n)
+            );
+
+
+        if (
+          inputs.length === 0
+        ) {
+
           hideLoader();
-          return alert('กรุณากรอกเลข 2 ตัว เช่น 12 หรือ 12 34 56');
+
+
+          alert(
+            'กรุณากรอกเลข 2 ตัว เช่น 12 หรือ 12 34 56'
+          );
+
+
+          return;
+
         }
 
-        let html = `<div class="result-inner">`;
+
+        let html =
+          `<div class="result-inner">`;
+
+
         let all = [];
 
-        inputs.forEach(num => {
-          let out = [];
 
-          for (let i = 0; i <= 9; i++) {
-            out.push(num + i);
+        inputs.forEach(
+          num => {
+
+            let out = [];
+
+
+            for (
+              let i = 0;
+              i <= 9;
+              i++
+            ) {
+
+              out.push(
+                num + i
+              );
+
+            }
+
+
+            all.push(
+              ...out
+            );
+
+
+            html +=
+              block(
+                `ชุดลาก ${num}`,
+                out
+              );
+
           }
+        );
 
-          all.push(...out);
-          html += block(`ชุดลาก ${num}`, out);
-        });
 
-        html += `<button class="copy" onclick="copyAll()">คัดลอกทั้งหมด</button></div>`;
+        html += `
 
-        allText = all.join('-');
+          <button
+            class="copy"
+            onclick="copyAll()"
+          >
+            คัดลอกทั้งหมด
+          </button>
 
-        document.getElementById('result').innerHTML = html;
+        </div>
+
+        `;
+
+
+        allText =
+          all.join('-');
+
+
+        document
+          .getElementById(
+            'result'
+          )
+          .innerHTML =
+          html;
+
 
         hideLoader();
+
       }, 300);
+
     }
+
+
+    /* ========================================
+       MULTI
+    ======================================== */
 
     function generateMulti() {
+
       showLoader();
 
+
       setTimeout(() => {
-        const raw = document.getElementById('multiInput').value.trim();
+
+        const raw =
+          document
+            .getElementById(
+              'multiInput'
+            )
+            .value
+            .trim();
+
 
         if (!raw) {
+
           hideLoader();
-          return alert('กรุณากรอกเลขก่อน');
+
+
+          alert(
+            'กรุณากรอกเลขก่อน'
+          );
+
+
+          return;
+
         }
 
-        const sets = raw
-          .split(/[\s,\-]+/)
-          .map(s => s.replace(/\D/g, ''))
-          .filter(s => s.length >= 3);
 
-        if (sets.length === 0) {
+        const sets =
+          raw
+            .split(/[\s,\-]+/)
+            .map(
+              s =>
+                s.replace(
+                  /\D/g,
+                  ''
+                )
+            )
+            .filter(
+              s =>
+                s.length >= 3
+            );
+
+
+        if (
+          sets.length === 0
+        ) {
+
           hideLoader();
-          return alert('ต้องมีเลขอย่างน้อย 3 ตัวต่อชุด เช่น 123456 23456');
+
+
+          alert(
+            'ต้องมีเลขอย่างน้อย 3 ตัวต่อชุด'
+          );
+
+
+          return;
+
         }
+
 
         const twoNoDouble = [];
+
         const threeNoDouble = [];
+
         const twoWithDouble = [];
+
         const threeWithDouble = [];
 
-        sets.forEach(set => {
-          const arr = set.split('');
 
-          const c2 = uniqueCombo(arr, 2);
-          const c3 = uniqueCombo(arr, 3);
-          const c2d = comboWithRepeat(arr, 2);
-          const c3d = comboWithRepeat(arr, 3);
+        sets.forEach(
+          set => {
 
-          twoNoDouble.push({
-            source: set,
-            text: c2.join('-'),
-            count: c2.length,
-            is3: false
-          });
+            const arr =
+              set.split('');
 
-          threeNoDouble.push({
-            source: set,
-            text: c3.join('-'),
-            count: c3.length,
-            is3: true
-          });
 
-          twoWithDouble.push({
-            source: set,
-            text: c2d.join('-'),
-            count: c2d.length,
-            is3: false
-          });
+            const c2 =
+              uniqueCombo(
+                arr,
+                2
+              );
 
-          threeWithDouble.push({
-            source: set,
-            text: c3d.join('-'),
-            count: c3d.length,
-            is3: true
-          });
-        });
 
-        document.getElementById('multiResult').innerHTML =
-          `<div class="result-inner">
-            ${multiBlock('2 ตัว ไม่เบิ้ล', twoNoDouble, 'twoNoDouble')}
-            ${multiBlock('3 ตัว ไม่เบิ้ล', threeNoDouble, 'threeNoDouble')}
-            ${multiBlock('2 ตัว รวมเบิ้ล', twoWithDouble, 'twoWithDouble')}
-            ${multiBlock('3 ตัว รวมเบิ้ล', threeWithDouble, 'threeWithDouble')}
-          </div>`;
+            const c3 =
+              uniqueCombo(
+                arr,
+                3
+              );
+
+
+            const c2d =
+              comboWithRepeat(
+                arr,
+                2
+              );
+
+
+            const c3d =
+              comboWithRepeat(
+                arr,
+                3
+              );
+
+
+            twoNoDouble.push({
+
+              source: set,
+
+              text:
+                c2.join('-'),
+
+              count:
+                c2.length,
+
+              is3: false
+
+            });
+
+
+            threeNoDouble.push({
+
+              source: set,
+
+              text:
+                c3.join('-'),
+
+              count:
+                c3.length,
+
+              is3: true
+
+            });
+
+
+            twoWithDouble.push({
+
+              source: set,
+
+              text:
+                c2d.join('-'),
+
+              count:
+                c2d.length,
+
+              is3: false
+
+            });
+
+
+            threeWithDouble.push({
+
+              source: set,
+
+              text:
+                c3d.join('-'),
+
+              count:
+                c3d.length,
+
+              is3: true
+
+            });
+
+          }
+        );
+
+
+        document
+          .getElementById(
+            'multiResult'
+          )
+          .innerHTML = `
+
+            <div class="result-inner">
+
+              ${multiBlock(
+                '2 ตัว ไม่เบิ้ล',
+                twoNoDouble,
+                'twoNoDouble'
+              )}
+
+              ${multiBlock(
+                '3 ตัว ไม่เบิ้ล',
+                threeNoDouble,
+                'threeNoDouble'
+              )}
+
+              ${multiBlock(
+                '2 ตัว รวมเบิ้ล',
+                twoWithDouble,
+                'twoWithDouble'
+              )}
+
+              ${multiBlock(
+                '3 ตัว รวมเบิ้ล',
+                threeWithDouble,
+                'threeWithDouble'
+              )}
+
+            </div>
+
+          `;
+
 
         hideLoader();
+
       }, 300);
+
     }
+
+
+    /* ========================================
+       PRESETS
+    ======================================== */
 
     function textToArray(text) {
-      return text.trim().split(/\s+/).filter(Boolean);
+
+      return text
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
     }
+
 
     const presetSets = {
+
+
       running: {
+
         title: 'เรียง',
+
         type: 'num3',
-        data: textToArray(`
-          012 123 234 345 456 567 678 789 890 901
-        `)
+
+        data:
+          textToArray(`
+
+            012 123 234 345 456
+            567 678 789 890 901
+
+          `)
+
       },
+
 
       sibling: {
+
         title: 'พี่น้อง',
+
         type: 'num2',
-        data: textToArray(`
-          01 12 23 34 45 56 67 78 89 90
-        `)
+
+        data:
+          textToArray(`
+
+            01 12 23 34 45
+            56 67 78 89 90
+
+          `)
+
       },
+
 
       triple: {
+
         title: 'ตอง',
+
         type: 'num3',
-        data: textToArray(`
-          000 111 222 333 444 555 666 777 888 999
-        `)
+
+        data:
+          textToArray(`
+
+            000 111 222 333 444
+            555 666 777 888 999
+
+          `)
+
       },
+
 
       doubleBack: {
+
         title: 'เบิ้ลหลัง',
+
         type: 'num3',
-        data: textToArray(`
-          100 211 122 133 144 155 166 177 188 199
-          200 311 322 233 244 255 266 277 288 299
-          300 411 422 433 344 355 366 377 388 399
-          400 511 522 533 544 455 466 477 488 499
-          500 611 622 633 644 655 566 577 588 599
-          600 711 722 733 744 755 766 677 688 699
-          700 811 822 833 844 855 866 877 788 799
-          800 911 922 933 944 955 966 977 988 899
-          900 011 022 033 044 055 066 077 088 099
-        `)
+
+        data:
+          textToArray(`
+
+            100 211 122 133 144 155 166 177 188 199
+            200 311 322 233 244 255 266 277 288 299
+            300 411 422 433 344 355 366 377 388 399
+            400 511 522 533 544 455 466 477 488 499
+            500 611 622 633 644 655 566 577 588 599
+            600 711 722 733 744 755 766 677 688 699
+            700 811 822 833 844 855 866 877 788 799
+            800 911 922 933 944 955 966 977 988 899
+            900 011 022 033 044 055 066 077 088 099
+
+          `)
+
       },
+
 
       doubleFront: {
+
         title: 'เบิ้ลหน้า',
+
         type: 'num3',
-        data: textToArray(`
-          001 002 003 004 005 006 007 008 009
-          112 113 114 115 116 117 118 119 110
-          221 223 224 225 226 227 228 229 220
-          331 332 334 335 336 337 338 339 330
-          441 442 443 445 446 448 447 449 440
-          551 552 553 554 556 557 558 559 550
-          661 662 663 664 665 667 668 669 660
-          771 772 773 774 775 776 778 779 770
-          881 882 883 884 885 886 887 889 880
-          991 992 993 994 995 996 997 998 990
-        `)
+
+        data:
+          textToArray(`
+
+            001 002 003 004 005 006 007 008 009
+            112 113 114 115 116 117 118 119 110
+            221 223 224 225 226 227 228 229 220
+            331 332 334 335 336 337 338 339 330
+            441 442 443 445 446 448 447 449 440
+            551 552 553 554 556 557 558 559 550
+            661 662 663 664 665 667 668 669 660
+            771 772 773 774 775 776 778 779 770
+            881 882 883 884 885 886 887 889 880
+            991 992 993 994 995 996 997 998 990
+
+          `)
+
       },
+
 
       ham: {
+
         title: 'หาม',
+
         type: 'num3',
-        data: textToArray(`
-          010 121 212 313 414 515 616 717 818 919
-          020 131 232 323 424 525 626 727 828 929
-          030 141 242 343 434 535 636 737 838 939
-          040 151 252 353 454 545 646 747 848 949
-          050 161 262 363 464 565 656 757 858 959
-          060 171 272 373 474 575 676 767 868 969
-          070 181 282 383 484 585 686 787 878 979
-          080 191 292 393 494 595 696 797 898 989
-          090 101 202 303 404 505 606 707 808 909
-        `)
+
+        data:
+          textToArray(`
+
+            010 121 212 313 414 515 616 717 818 919
+            020 131 232 323 424 525 626 727 828 929
+            030 141 242 343 434 535 636 737 838 939
+            040 151 252 353 454 545 646 747 848 949
+            050 161 262 363 464 565 656 757 858 959
+            060 171 272 373 474 575 676 767 868 969
+            070 181 282 383 484 585 686 787 878 979
+            080 191 292 393 494 595 696 797 898 989
+            090 101 202 303 404 505 606 707 808 909
+
+          `)
+
       },
+
 
       khayan: {
+
         title: 'ชุดขยัน',
+
         type: 'num2',
-        data: textToArray(`
-          36 38 39 37 46 47 48
-          49 54 56 57 58 96 97
-          98 67 68 78 59
-        `)
+
+        data:
+          textToArray(`
+
+            36 38 39 37 46 47 48
+            49 54 56 57 58 96 97
+            98 67 68 78 59
+
+          `)
+
       },
+
 
       straightNoReverse: {
+
         title: 'ชุดตรงไม่กลับ',
+
         type: 'num2',
-        data: textToArray(`
-          00 01 02 03 04 05 06 08
-          10 11 12 13 14 15 16 18
-          20 21 22 23 24 25 26 28
-          30 31 32 33 34 35 36 38
-          40 41 42 43 44 45 46 48
-          50 51 52 53 54 55 56 58
-          60 61 62 63 64 65 66 68
-          80 81 82 83 84 85 86 88
-        `)
+
+        data:
+          textToArray(`
+
+            00 01 02 03 04 05 06 08
+            10 11 12 13 14 15 16 18
+            20 21 22 23 24 25 26 28
+            30 31 32 33 34 35 36 38
+            40 41 42 43 44 45 46 48
+            50 51 52 53 54 55 56 58
+            60 61 62 63 64 65 66 68
+            80 81 82 83 84 85 86 88
+
+          `)
+
       },
 
+
       lawin: {
+
         title: 'ชุดล่าวิน',
+
         type: 'num3',
-        data: textToArray(`
-          012 013 014 015 016 017
-          018 023 024 026 025 027
-          028 034 035 036 037 038
-          045 046 047 048 169 056
-          057 058 076 078 086 123
-          124 125 126 127 128 134
-          136 137 138 146 147 148
-          156 157 158 176 178 234
-          235 236 237 238 246 247
-          248 256 257 258 276 278
-          346 345 347 348 356 357
-          358 368 376 378 456 457
-          458 468 476 478 576 578
-          586 678 769 869 135
-        `)
+
+        data:
+          textToArray(`
+
+            012 013 014 015 016 017
+            018 023 024 026 025 027
+            028 034 035 036 037 038
+            045 046 047 048 169 056
+            057 058 076 078 086 123
+            124 125 126 127 128 134
+            136 137 138 146 147 148
+            156 157 158 176 178 234
+            235 236 237 238 246 247
+            248 256 257 258 276 278
+            346 345 347 348 356 357
+            358 368 376 378 456 457
+            458 468 476 478 576 578
+            586 678 769 869 135
+
+          `)
+
       }
+
     };
 
+
     function getExecutionSet() {
+
       return [
-        ...presetSets.doubleBack.data,
-        ...presetSets.doubleFront.data,
-        ...presetSets.ham.data
+
+        ...presetSets
+          .doubleBack
+          .data,
+
+        ...presetSets
+          .doubleFront
+          .data,
+
+        ...presetSets
+          .ham
+          .data
+
       ];
+
     }
 
-    function presetBlock(key, title, data, type) {
-      const text = data.join('-');
 
-      window.presetCopyData[key] = text;
+    function presetBlock(
+      key,
+      title,
+      data,
+      type
+    ) {
+
+      const text =
+        data.join('-');
+
+
+      window.presetCopyData[
+        key
+      ] =
+        text;
+
 
       return `
+
         <div class="block preset-block">
-          <div class="title">${title}</div>
+
+          <div class="title">
+            ${title}
+          </div>
 
           <div class="count-text">
             (รวม ${data.length} ชุด)
           </div>
 
-          <button class="btn-show" id="btn_${key}" onclick="togglePreset('${key}')">แสดงเลข</button>
-          <button class="copy" onclick="copyPreset('${key}')">คัดลอก</button>
+          <button
+            class="btn-show"
+            id="btn_${key}"
+            onclick="
+              togglePreset(
+                '${key}'
+              )
+            "
+          >
+            แสดงเลข
+          </button>
 
-          <div id="box_${key}" class="numbers preset-numbers ${type}">
+          <button
+            class="copy"
+            onclick="
+              copyPreset(
+                '${key}'
+              )
+            "
+          >
+            คัดลอก
+          </button>
+
+          <div
+            id="box_${key}"
+            class="
+              numbers
+              preset-numbers
+              ${type}
+            "
+          >
             ${text}
           </div>
+
         </div>
+
       `;
+
     }
+
 
     function renderPresetSets() {
-      const presetResult = document.getElementById('presetResult');
 
-      const execution = getExecutionSet();
+      const presetResult =
+        document
+          .getElementById(
+            'presetResult'
+          );
 
-      let html = `<div class="result-inner preset-inner"><div class="preset-grid">`;
 
-      html += presetBlock('preset_doubleBack', presetSets.doubleBack.title, presetSets.doubleBack.data, presetSets.doubleBack.type);
-      html += presetBlock('preset_doubleFront', presetSets.doubleFront.title, presetSets.doubleFront.data, presetSets.doubleFront.type);
-      html += presetBlock('preset_ham', presetSets.ham.title, presetSets.ham.data, presetSets.ham.type);
-      html += presetBlock('preset_execution', 'ชุดประหาร', execution, 'num3');
-      html += presetBlock('preset_khayan', presetSets.khayan.title, presetSets.khayan.data, presetSets.khayan.type);
-      html += presetBlock('preset_straightNoReverse', presetSets.straightNoReverse.title, presetSets.straightNoReverse.data, presetSets.straightNoReverse.type);
-      html += presetBlock('preset_lawin', presetSets.lawin.title, presetSets.lawin.data, presetSets.lawin.type);
-      html += presetBlock('preset_running', presetSets.running.title, presetSets.running.data, presetSets.running.type);
-      html += presetBlock('preset_sibling', presetSets.sibling.title, presetSets.sibling.data, presetSets.sibling.type);
-      html += presetBlock('preset_triple', presetSets.triple.title, presetSets.triple.data, presetSets.triple.type);
+      const execution =
+        getExecutionSet();
 
-      html += `</div></div>`;
 
-      presetResult.innerHTML = html;
+      let html = `
+
+        <div
+          class="
+            result-inner
+            preset-inner
+          "
+        >
+
+          <div class="preset-grid">
+
+      `;
+
+
+      html +=
+        presetBlock(
+          'preset_doubleBack',
+          presetSets.doubleBack.title,
+          presetSets.doubleBack.data,
+          presetSets.doubleBack.type
+        );
+
+
+      html +=
+        presetBlock(
+          'preset_doubleFront',
+          presetSets.doubleFront.title,
+          presetSets.doubleFront.data,
+          presetSets.doubleFront.type
+        );
+
+
+      html +=
+        presetBlock(
+          'preset_ham',
+          presetSets.ham.title,
+          presetSets.ham.data,
+          presetSets.ham.type
+        );
+
+
+      html +=
+        presetBlock(
+          'preset_execution',
+          'ชุดประหาร',
+          execution,
+          'num3'
+        );
+
+
+      html +=
+        presetBlock(
+          'preset_khayan',
+          presetSets.khayan.title,
+          presetSets.khayan.data,
+          presetSets.khayan.type
+        );
+
+
+      html +=
+        presetBlock(
+          'preset_straightNoReverse',
+          presetSets.straightNoReverse.title,
+          presetSets.straightNoReverse.data,
+          presetSets.straightNoReverse.type
+        );
+
+
+      html +=
+        presetBlock(
+          'preset_lawin',
+          presetSets.lawin.title,
+          presetSets.lawin.data,
+          presetSets.lawin.type
+        );
+
+
+      html +=
+        presetBlock(
+          'preset_running',
+          presetSets.running.title,
+          presetSets.running.data,
+          presetSets.running.type
+        );
+
+
+      html +=
+        presetBlock(
+          'preset_sibling',
+          presetSets.sibling.title,
+          presetSets.sibling.data,
+          presetSets.sibling.type
+        );
+
+
+      html +=
+        presetBlock(
+          'preset_triple',
+          presetSets.triple.title,
+          presetSets.triple.data,
+          presetSets.triple.type
+        );
+
+
+      html += `
+
+          </div>
+
+        </div>
+
+      `;
+
+
+      presetResult.innerHTML =
+        html;
+
     }
+
 
     function togglePreset(key) {
-      const box = document.getElementById('box_' + key);
-      const btn = document.getElementById('btn_' + key);
 
-      if (!box || !btn) return;
+      const box =
+        document
+          .getElementById(
+            'box_' + key
+          );
 
-      const isHidden = box.style.display === '' || box.style.display === 'none';
 
-      if (isHidden) {
-        box.style.display = 'block';
-        btn.innerText = 'ซ่อนเลข';
-      } else {
-        box.style.display = 'none';
-        btn.innerText = 'แสดงเลข';
+      const btn =
+        document
+          .getElementById(
+            'btn_' + key
+          );
+
+
+      if (
+        !box ||
+        !btn
+      ) {
+
+        return;
+
       }
+
+
+      const hidden =
+        box.style.display === '' ||
+        box.style.display === 'none';
+
+
+      if (hidden) {
+
+        box.style.display =
+          'block';
+
+
+        btn.innerText =
+          'ซ่อนเลข';
+
+      } else {
+
+        box.style.display =
+          'none';
+
+
+        btn.innerText =
+          'แสดงเลข';
+
+      }
+
     }
+
+
+    /* ========================================
+       INPUT
+    ======================================== */
 
     function handleInput(el) {
-      const allowSpace = document.getElementById('allowSpace').checked;
+
+      const allowSpace =
+        document
+          .getElementById(
+            'allowSpace'
+          )
+          .checked;
+
 
       if (allowSpace) {
-        el.value = el.value.replace(/[^0-9\s]/g, '');
+
+        el.value =
+          el.value.replace(
+            /[^0-9\s]/g,
+            ''
+          );
+
       } else {
-        el.value = el.value.replace(/[^0-9]/g, '');
+
+        el.value =
+          el.value.replace(
+            /[^0-9]/g,
+            ''
+          );
+
       }
+
     }
 
-    document.getElementById('input').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
 
-        const val = this.value.trim();
-        const allowSpace = document.getElementById('allowSpace').checked;
+    document
+      .getElementById(
+        'input'
+      )
+      .addEventListener(
+        'keydown',
+        function(e) {
 
-        if (allowSpace) {
-          run2();
-        } else if (val.length === 2) {
-          run2();
-        } else if (val.length >= 3) {
-          generate();
-        } else {
-          alert('กรุณากรอกเลขอย่างน้อย 2 ตัว');
+          if (
+            e.key !== 'Enter'
+          ) {
+
+            return;
+
+          }
+
+
+          e.preventDefault();
+
+
+          const value =
+            this.value.trim();
+
+
+          const allowSpace =
+            document
+              .getElementById(
+                'allowSpace'
+              )
+              .checked;
+
+
+          if (allowSpace) {
+
+            run2();
+
+          } else if (
+            value.length === 2
+          ) {
+
+            run2();
+
+          } else if (
+            value.length >= 3
+          ) {
+
+            generate();
+
+          } else {
+
+            alert(
+              'กรุณากรอกเลขอย่างน้อย 2 ตัว'
+            );
+
+          }
+
         }
-      }
-    });
+      );
 
-    document.getElementById('multiInput').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        generateMulti();
-      }
-    });
 
-    document.getElementById('allowSpace').addEventListener('change', () => {
-      document.getElementById('input').value = '';
-    });
+    document
+      .getElementById(
+        'allowSpace'
+      )
+      .addEventListener(
+        'change',
+        () => {
 
-    document.getElementById('multiInput').addEventListener('input', function () {
-      this.value = this.value
-        .replace(/[^\d\s,\-]/g, '')
-        .replace(/-/g, '\n');
-    });
+          document
+            .getElementById(
+              'input'
+            )
+            .value = '';
 
-    /* ระบบคำนวณเลขลอยด้านซ้าย */
+        }
+      );
+
+
+    document
+      .getElementById(
+        'multiInput'
+      )
+      .addEventListener(
+        'input',
+        function() {
+
+          this.value =
+            this.value
+              .replace(
+                /[^\d\s,\-]/g,
+                ''
+              )
+              .replace(
+                /-/g,
+                '\n'
+              );
+
+        }
+      );
+
+
+    document
+      .getElementById(
+        'multiInput'
+      )
+      .addEventListener(
+        'keydown',
+        function(e) {
+
+          if (
+            e.key === 'Enter' &&
+            !e.shiftKey
+          ) {
+
+            e.preventDefault();
+
+            generateMulti();
+
+          }
+
+        }
+      );
+
+
+    /* ========================================
+       LOGIN ENTER
+    ======================================== */
+
+    document
+      .getElementById(
+        'loginPassword'
+      )
+      .addEventListener(
+        'keydown',
+        function(e) {
+
+          if (
+            e.key === 'Enter'
+          ) {
+
+            e.preventDefault();
+
+            loginUser();
+
+          }
+
+        }
+      );
+
+
+    document
+      .getElementById(
+        'registerPasswordConfirm'
+      )
+      .addEventListener(
+        'keydown',
+        function(e) {
+
+          if (
+            e.key === 'Enter'
+          ) {
+
+            e.preventDefault();
+
+            registerUser();
+
+          }
+
+        }
+      );
+
+
+    /* ========================================
+       MINI CALCULATOR
+    ======================================== */
+
     function toggleFloatingCalc() {
-      const box = document.getElementById('floatingCalcBox');
 
-      if (!box) return;
+      document
+        .getElementById(
+          'floatingCalcBox'
+        )
+        .classList
+        .toggle('closed');
 
-      box.classList.toggle('closed');
     }
+
 
     function calculateMiniFormula(raw) {
-      raw = raw.trim().replace(/\s+/g, '');
 
-      if (!raw) return '';
+      raw =
+        raw
+          .trim()
+          .replace(
+            /\s+/g,
+            ''
+          );
 
-      if (!/^[0-9+\-]+$/.test(raw)) {
-        return '';
-      }
-
-      if (/^[+\-]/.test(raw)) {
-        return '';
-      }
-
-      if (/[+\-]$/.test(raw)) {
-        return '';
-      }
-
-      if (/[+\-]{2,}/.test(raw)) {
-        return '';
-      }
-
-      const parts = raw.match(/\d+|[+\-]/g);
-
-      if (!parts || parts.length === 0) {
-        return '';
-      }
-
-      let total = parseInt(parts[0], 10);
-
-      for (let i = 1; i < parts.length; i += 2) {
-        const operator = parts[i];
-        const number = parseInt(parts[i + 1], 10);
-
-        if (Number.isNaN(number)) {
-          return '';
-        }
-
-        if (operator === '+') {
-          total += number;
-        } else if (operator === '-') {
-          total -= number;
-        }
-      }
-
-      return `${raw} = *${total}*`;
-    }
-
-    function updateMiniCalc() {
-      const input = document.getElementById('miniCalcInput');
-      const result = document.getElementById('miniCalcFormula');
-
-      if (!input || !result) return;
-
-      const raw = input.value.trim();
-      const formula = calculateMiniFormula(raw);
 
       if (!raw) {
-        miniCalcText = '';
-        result.classList.remove('answer');
-        result.classList.add('placeholder');
-        result.innerText = 'กรอกเช่น 1+1 หรือ 1+1-2';
-        return;
+
+        return '';
+
       }
+
+
+      if (
+        !/^[0-9+\-]+$/
+          .test(raw)
+      ) {
+
+        return '';
+
+      }
+
+
+      if (
+        /^[+\-]/
+          .test(raw)
+      ) {
+
+        return '';
+
+      }
+
+
+      if (
+        /[+\-]$/
+          .test(raw)
+      ) {
+
+        return '';
+
+      }
+
+
+      if (
+        /[+\-]{2,}/
+          .test(raw)
+      ) {
+
+        return '';
+
+      }
+
+
+      const parts =
+        raw.match(
+          /\d+|[+\-]/g
+        );
+
+
+      if (!parts) {
+
+        return '';
+
+      }
+
+
+      let total =
+        parseInt(
+          parts[0],
+          10
+        );
+
+
+      for (
+        let i = 1;
+        i < parts.length;
+        i += 2
+      ) {
+
+        const operator =
+          parts[i];
+
+
+        const number =
+          parseInt(
+            parts[i + 1],
+            10
+          );
+
+
+        if (
+          Number.isNaN(number)
+        ) {
+
+          return '';
+
+        }
+
+
+        if (
+          operator === '+'
+        ) {
+
+          total += number;
+
+        } else {
+
+          total -= number;
+
+        }
+
+      }
+
+
+      return `${raw} = *${total}*`;
+
+    }
+
+
+    function updateMiniCalc() {
+
+      const input =
+        document
+          .getElementById(
+            'miniCalcInput'
+          );
+
+
+      const result =
+        document
+          .getElementById(
+            'miniCalcFormula'
+          );
+
+
+      const raw =
+        input.value.trim();
+
+
+      const formula =
+        calculateMiniFormula(
+          raw
+        );
+
+
+      if (!raw) {
+
+        miniCalcText = '';
+
+
+        result.className =
+          'mini-calc-formula placeholder';
+
+
+        result.innerText =
+          'กรอกเช่น 1+1 หรือ 1+1-2';
+
+
+        return;
+
+      }
+
 
       if (!formula) {
+
         miniCalcText = '';
-        result.classList.remove('answer');
-        result.classList.remove('placeholder');
+
+
+        result.className =
+          'mini-calc-formula';
+
+
         result.innerText = '';
+
+
         return;
+
       }
 
-      miniCalcText = formula;
-      result.classList.remove('placeholder');
-      result.classList.add('answer');
-      result.innerText = formula;
+
+      miniCalcText =
+        formula;
+
+
+      result.className =
+        'mini-calc-formula answer';
+
+
+      result.innerText =
+        formula;
+
     }
+
 
     function copyMiniCalc() {
+
       if (!miniCalcText) {
-        return alert('ยังไม่มีสูตรให้คัดลอก');
+
+        alert(
+          'ยังไม่มีสูตรให้คัดลอก'
+        );
+
+        return;
+
       }
 
-      copy(miniCalcText);
+
+      copy(
+        miniCalcText
+      );
+
     }
 
-    document.getElementById('miniCalcInput').addEventListener('input', updateMiniCalc);
 
-    document.getElementById('miniCalcInput').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
+    document
+      .getElementById(
+        'miniCalcInput'
+      )
+      .addEventListener(
+        'input',
+        updateMiniCalc
+      );
 
-        if (miniCalcText) {
-          this.value = miniCalcText;
-          updateMiniCalc();
-        }
-      }
-    });
 
-    function createRain() {
-      const drop = document.createElement("div");
-      drop.className = "raindrop";
-      drop.style.left = Math.random() * window.innerWidth + "px";
-
-      const height = Math.random() * 10 + 10;
-      drop.style.height = height + "px";
-
-      const duration = Math.random() * 1 + 0.5;
-      drop.style.animationDuration = duration + "s";
-
-      document.body.appendChild(drop);
-
-      setTimeout(() => {
-        drop.remove();
-      }, duration * 1000);
-    }
-
-    setInterval(createRain, 40);
+    /* ========================================
+       LOADER
+    ======================================== */
 
     function showLoader() {
-      if (document.getElementById('page-normal').classList.contains('active')) {
-        document.getElementById('result').innerHTML = '';
+
+      const old =
+        document
+          .getElementById(
+            'loader'
+          );
+
+
+      if (old) {
+
+        old.remove();
+
       }
 
-      if (document.getElementById('page-multi').classList.contains('active')) {
-        document.getElementById('multiResult').innerHTML = '';
-      }
 
-      const oldLoader = document.getElementById('loader');
+      const loader =
+        document.createElement(
+          'div'
+        );
 
-      if (oldLoader) {
-        oldLoader.remove();
-      }
 
-      const loader = document.createElement('div');
-      loader.className = 'loader';
-      loader.id = 'loader';
-      loader.innerHTML = `<div class="spinner"></div>`;
+      loader.id =
+        'loader';
 
-      document.body.appendChild(loader);
+
+      loader.className =
+        'loader';
+
+
+      loader.innerHTML =
+        '<div class="spinner"></div>';
+
+
+      document.body
+        .appendChild(loader);
+
     }
+
 
     function hideLoader() {
-      const loader = document.getElementById('loader');
 
-      if (loader) {
-        loader.remove();
-      }
+      document
+        .getElementById(
+          'loader'
+        )
+        ?.remove();
+
     }
+
+
+    /* ========================================
+       CLEAR
+    ======================================== */
 
     function clearAll() {
-      document.getElementById('input').value = '';
-      document.getElementById('result').innerHTML = '';
+
+      document
+        .getElementById(
+          'input'
+        )
+        .value = '';
+
+
+      document
+        .getElementById(
+          'result'
+        )
+        .innerHTML = '';
+
+
       allText = '';
+
     }
+
 
     function clearMulti() {
-      document.getElementById('multiInput').value = '';
-      document.getElementById('multiResult').innerHTML = '';
+
+      document
+        .getElementById(
+          'multiInput'
+        )
+        .value = '';
+
+
+      document
+        .getElementById(
+          'multiResult'
+        )
+        .innerHTML = '';
+
     }
 
+
+    /* ========================================
+       RAIN
+    ======================================== */
+
+    function createRain() {
+
+      if (
+        !localStorage.getItem(
+          'winNumberLoggedIn'
+        )
+      ) {
+
+        return;
+
+      }
+
+
+      const drop =
+        document.createElement(
+          'div'
+        );
+
+
+      drop.className =
+        'raindrop';
+
+
+      drop.style.left =
+        Math.random() *
+        window.innerWidth +
+        'px';
+
+
+      const height =
+        Math.random() * 10 +
+        10;
+
+
+      drop.style.height =
+        height + 'px';
+
+
+      const duration =
+        Math.random() * 1 +
+        0.5;
+
+
+      drop.style.animationDuration =
+        duration + 's';
+
+
+      document.body
+        .appendChild(drop);
+
+
+      setTimeout(
+        () => drop.remove(),
+        duration * 1000
+      );
+
+    }
+
+
+    setInterval(
+      createRain,
+      80
+    );
+
+
+    /* ========================================
+       CLICK OUTSIDE MODAL
+    ======================================== */
+
+    document
+      .getElementById(
+        'userDetailOverlay'
+      )
+      .addEventListener(
+        'click',
+        function(e) {
+
+          if (
+            e.target === this
+          ) {
+
+            closeUserDetail();
+
+          }
+
+        }
+      );
+
+
+    document
+      .getElementById(
+        'adminPanel'
+      )
+      .addEventListener(
+        'click',
+        function(e) {
+
+          if (
+            e.target === this
+          ) {
+
+            closeAdminPanel();
+
+          }
+
+        }
+      );
+
+
+    /* ========================================
+       START
+    ======================================== */
+
+    createDefaultAdmin();
+
     renderPresetSets();
+
+    checkLogin();
+
   </script>
+
 </body>
 
 </html>
