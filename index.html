@@ -1357,6 +1357,30 @@
     }
 
 
+    /* สมัครเมื่อ + ประวัติ Login อยู่ข้างกัน */
+    .detail-middle-row {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.45fr);
+      gap: 12px;
+      align-items: start;
+      margin-top: 16px;
+    }
+
+    .detail-middle-row .detail-info-box {
+      margin-top: 0;
+      min-height: 70px;
+      height: 70px;
+    }
+
+    .detail-middle-row .login-history-box {
+      margin-top: 0;
+    }
+
+    .detail-middle-row .login-history-header {
+      min-height: 70px;
+    }
+
+
     .detail-delete-btn {
       width: 100%;
 
@@ -1995,6 +2019,15 @@
 
       .detail-eye-btn {
         width: 100%;
+      }
+
+      .detail-middle-row {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-middle-row .detail-info-box {
+        height: auto;
+        min-height: 70px;
       }
 
     }
@@ -2636,77 +2669,79 @@
       </button>
 
 
-      <!-- CREATED -->
+      <!-- สมัครเมื่อ + ประวัติ Login อยู่ข้างกัน -->
 
-      <div class="detail-info-box">
+      <div class="detail-middle-row">
 
-        <span style="font-size:22px;">
-          📅
-        </span>
+        <!-- CREATED -->
+        <div class="detail-info-box">
 
-        <div>
+          <span style="font-size:22px;">
+            📅
+          </span>
 
-          <b>
-            สมัครเมื่อ
-          </b>
+          <div>
 
-          <div
-            id="detailCreatedAt"
-            style="margin-top:3px;"
-          >
-            -
+            <b>
+              สมัครเมื่อ
+            </b>
+
+            <div
+              id="detailCreatedAt"
+              style="margin-top:3px;"
+            >
+              -
+            </div>
+
           </div>
 
         </div>
 
-      </div>
 
-
-
-
-      <!-- LOGIN HISTORY -->
-
-      <div
-        id="loginHistoryBox"
-        class="login-history-box"
-      >
-
-        <button
-          class="login-history-header"
-          onclick="toggleLoginHistory()"
+        <!-- LOGIN HISTORY -->
+        <div
+          id="loginHistoryBox"
+          class="login-history-box"
         >
 
-          <span class="login-history-title-row">
-            <span>📖 ประวัติการเข้าสู่ระบบ</span>
-
-            <span
-              id="loginHistoryCount"
-              class="login-history-count"
-            >
-              0
-            </span>
-          </span>
-
-          <span class="login-history-arrow">
-            ▼
-          </span>
-
-        </button>
-
-        <div class="login-history-content">
-
-          <div
-            id="loginHistoryList"
-            class="login-history-list"
-          ></div>
-
           <button
-            id="clearLoginHistoryBtn"
-            class="login-history-clear"
-            onclick="clearCurrentLoginHistory()"
+            class="login-history-header"
+            onclick="toggleLoginHistory()"
           >
-            🧹 ล้างประวัติการเข้าสู่ระบบ
+
+            <span class="login-history-title-row">
+              <span>📖 ประวัติการเข้าสู่ระบบ</span>
+
+              <span
+                id="loginHistoryCount"
+                class="login-history-count"
+              >
+                0
+              </span>
+            </span>
+
+            <span class="login-history-arrow">
+              ▼
+            </span>
+
           </button>
+
+          <div class="login-history-content">
+
+            <div
+              id="loginHistoryList"
+              class="login-history-list"
+            ></div>
+
+            <button
+              id="clearLoginHistoryBtn"
+              class="login-history-clear"
+              onclick="clearCurrentLoginHistory()"
+            >
+              🧹 ล้างประวัติการเข้าสู่ระบบ
+            </button>
+
+          </div>
 
         </div>
 
@@ -2789,6 +2824,8 @@
   </div>
 
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
 
     /* ========================================
@@ -2808,599 +2845,458 @@
 
 
     /* ========================================
-       USER STORAGE
+       SUPABASE CONFIG
     ======================================== */
 
-    function getUsers() {
+    const SUPABASE_URL =
+      'https://xdipwfbljwthhxubilib.supabase.co';
 
-      try {
+    const SUPABASE_PUBLISHABLE_KEY =
+      'sb_publishable_YYYhCk2UOfqFxYL2nOyQ9Q_KcJ5ktNq';
 
-        return JSON.parse(
-          localStorage.getItem(
-            'winNumberUsers'
-          )
-        ) || {};
-
-      } catch (error) {
-
-        return {};
-
-      }
-
-    }
-
-
-    function saveUsers(users) {
-
-      localStorage.setItem(
-        'winNumberUsers',
-        JSON.stringify(users)
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          }
+        }
       );
 
-    }
-
-
+    let currentProfile = null;
+    let adminProfilesCache = new Map();
 
 
     /* ========================================
-       LOGIN HISTORY STORAGE
+       USERNAME -> INTERNAL EMAIL
+       ผู้ใช้ไม่ต้องเห็น Email นี้
     ======================================== */
 
-    function recordLoginHistoryByKey(userKey) {
-
-      const users =
-        getUsers();
-
-
-      const user =
-        users[userKey];
+    function normalizeUsername(username) {
+      return String(username || '')
+        .trim()
+        .normalize('NFC')
+        .toLowerCase();
+    }
 
 
-      if (!user) {
+    async function sha256Hex(text) {
+      const data =
+        new TextEncoder().encode(text);
 
-        return;
+      const hash =
+        await crypto.subtle.digest(
+          'SHA-256',
+          data
+        );
 
-      }
-
-
-      if (
-        !Array.isArray(
-          user.loginHistory
-        )
-      ) {
-
-        user.loginHistory = [];
-
-      }
-
-
-      user.loginHistory.unshift({
-
-        loginAt:
-          new Date().toISOString()
-
-      });
+      return Array.from(
+        new Uint8Array(hash)
+      )
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+    }
 
 
-      /*
-        เก็บสูงสุด 100 ครั้งต่อสมาชิก
-        เพื่อไม่ให้ localStorage ใหญ่เกินไป
-      */
+    async function usernameToInternalEmail(username) {
+      const normalized =
+        normalizeUsername(username);
 
-      if (
-        user.loginHistory.length > 100
-      ) {
+      const hash =
+        await sha256Hex(normalized);
 
-        user.loginHistory =
-          user.loginHistory.slice(
-            0,
-            100
-          );
-
-      }
-
-
-      saveUsers(users);
-
+      return `u.${hash.slice(0, 40)}@users.example.com`;
     }
 
 
     /* ========================================
-       DEFAULT ADMIN
-    ======================================== */
-
-    function createDefaultAdmin() {
-
-      const users = getUsers();
-
-
-      if (!users.admin) {
-
-        users.admin = {
-
-          username: 'admin',
-
-          password: '201045',
-
-          createdAt:
-            new Date().toISOString()
-
-        };
-
-
-        saveUsers(users);
-
-      }
-
-    }
-
-
-    /* ========================================
-       LOGIN / REGISTER
+       LOGIN / REGISTER UI
     ======================================== */
 
     function showLogin() {
-
       document
         .getElementById('registerScreen')
         .classList
         .add('hidden');
 
-
       document
         .getElementById('loginScreen')
         .classList
         .remove('hidden');
-
 
       document
         .getElementById('registerMessage')
         .innerText = '';
-
     }
 
 
     function showRegister() {
-
       document
         .getElementById('loginScreen')
         .classList
         .add('hidden');
 
-
       document
         .getElementById('registerScreen')
         .classList
         .remove('hidden');
-
 
       document
         .getElementById('registerUsername')
         .value = '';
 
-
       document
         .getElementById('registerPassword')
         .value = '';
-
 
       document
         .getElementById('registerPasswordConfirm')
         .value = '';
 
-
       document
         .getElementById('registerMessage')
         .innerText = '';
-
     }
 
 
-    function registerUser() {
-
+    async function registerUser() {
       const username =
         document
           .getElementById('registerUsername')
           .value
           .trim();
 
-
       const password =
         document
           .getElementById('registerPassword')
           .value;
-
 
       const confirmPassword =
         document
           .getElementById('registerPasswordConfirm')
           .value;
 
-
       const message =
         document
           .getElementById('registerMessage');
 
-
       message.className =
         'auth-message error';
 
-
       if (!username) {
-
         message.innerText =
           'กรุณากรอกชื่อผู้ใช้งาน';
-
         return;
-
       }
-
 
       if (username.length < 3) {
-
         message.innerText =
           'ชื่อผู้ใช้งานต้องมีอย่างน้อย 3 ตัว';
-
         return;
-
       }
 
+      if (username.length > 40) {
+        message.innerText =
+          'ชื่อผู้ใช้งานต้องไม่เกิน 40 ตัวอักษร';
+        return;
+      }
 
-      if (username === 'admin') {
-
+      if (normalizeUsername(username) === 'admin') {
         message.innerText =
           'ไม่สามารถสมัครชื่อ admin ได้';
-
         return;
-
       }
-
 
       if (!password) {
-
         message.innerText =
           'กรุณากรอกรหัสผ่าน';
-
         return;
-
       }
 
-
-      if (password.length < 4) {
-
+      if (password.length < 6) {
         message.innerText =
-          'รหัสผ่านต้องมีอย่างน้อย 4 ตัว';
-
+          'รหัสผ่านต้องมีอย่างน้อย 6 ตัว';
         return;
-
       }
 
-
-      if (
-        password !==
-        confirmPassword
-      ) {
-
+      if (password !== confirmPassword) {
         message.innerText =
           'รหัสผ่านทั้งสองช่องไม่ตรงกัน';
-
         return;
-
       }
 
-
-      const users =
-        getUsers();
-
-
-      if (users[username]) {
-
+      try {
+        message.className =
+          'auth-message';
         message.innerText =
-          'Username นี้มีผู้ใช้งานแล้ว';
+          'กำลังสมัครสมาชิก...';
 
-        return;
+        const email =
+          await usernameToInternalEmail(username);
 
+        const { data, error } =
+          await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                username: username,
+                username_normalized:
+                  normalizeUsername(username)
+              }
+            }
+          });
+
+        if (error) {
+          const msg =
+            String(error.message || '');
+
+          if (
+            msg.toLowerCase().includes('already') ||
+            msg.toLowerCase().includes('registered')
+          ) {
+            throw new Error(
+              'Username นี้มีผู้ใช้งานแล้ว'
+            );
+          }
+
+          throw error;
+        }
+
+        if (!data.session) {
+          throw new Error(
+            'สมัครแล้วแต่ยังเข้าใช้งานทันทีไม่ได้ กรุณาปิด Confirm email ใน Supabase Authentication → Sign In / Providers'
+          );
+        }
+
+        // Trigger ในฐานข้อมูลจะสร้าง profiles ให้อัตโนมัติ
+        // รอเล็กน้อยเพื่อให้ trigger/REST มองเห็น row
+        await new Promise(r => setTimeout(r, 300));
+
+        await supabaseClient.auth.signOut();
+
+        message.className =
+          'auth-message success';
+        message.innerText =
+          'สมัครสมาชิกสำเร็จ';
+
+        setTimeout(() => {
+          showLogin();
+
+          document
+            .getElementById('loginUsername')
+            .value = username;
+
+          document
+            .getElementById('loginPassword')
+            .value = '';
+
+          document
+            .getElementById('loginPassword')
+            .focus();
+        }, 700);
+
+      } catch (error) {
+        message.className =
+          'auth-message error';
+        message.innerText =
+          error?.message || 'สมัครสมาชิกไม่สำเร็จ';
       }
-
-
-      users[username] = {
-
-        username: username,
-
-        password: password,
-
-        createdAt:
-          new Date().toISOString()
-
-      };
-
-
-      saveUsers(users);
-
-
-      message.className =
-        'auth-message success';
-
-
-      message.innerText =
-        'สมัครสมาชิกสำเร็จ';
-
-
-      setTimeout(() => {
-
-        showLogin();
-
-
-        document
-          .getElementById('loginUsername')
-          .value =
-          username;
-
-
-        document
-          .getElementById('loginPassword')
-          .focus();
-
-      }, 700);
-
     }
 
 
-    function loginUser() {
+    async function fetchOwnProfile(userId) {
+      const { data, error } =
+        await supabaseClient
+          .from('profiles')
+          .select('id, username, role, created_at')
+          .eq('id', userId)
+          .single();
 
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    }
+
+
+    async function recordLoginHistory(userId) {
+      const { error } =
+        await supabaseClient
+          .from('login_history')
+          .insert({
+            user_id: userId
+          });
+
+      if (error) {
+        console.warn(
+          'บันทึกประวัติ Login ไม่สำเร็จ:',
+          error.message
+        );
+      }
+    }
+
+
+    async function loginUser() {
       const username =
         document
           .getElementById('loginUsername')
           .value
           .trim();
 
-
       const password =
         document
           .getElementById('loginPassword')
           .value;
 
-
       const message =
         document
           .getElementById('loginMessage');
 
-
       message.className =
         'auth-message error';
 
-
-      if (
-        !username ||
-        !password
-      ) {
-
+      if (!username || !password) {
         message.innerText =
           'กรุณากรอก Username และ Password';
-
         return;
-
       }
 
-
-      const users =
-        getUsers();
-
-
-      /*
-        ค้นหาจากค่า user.username จริง
-        เพื่อรองรับข้อมูลเก่าที่ key ใน localStorage
-        อาจไม่ตรงกับชื่อที่แสดงในหน้าจัดการสมาชิก
-      */
-
-      const normalizedLoginUsername =
-        String(username)
-          .trim()
-          .normalize('NFC');
-
-
-      const userKey =
-        Object.keys(users).find(key => {
-
-          const savedUsername =
-            String(users[key]?.username || '')
-              .trim()
-              .normalize('NFC');
-
-          return savedUsername === normalizedLoginUsername;
-
-        });
-
-
-      const user =
-        userKey
-          ? users[userKey]
-          : null;
-
-
-      if (!user) {
-
+      try {
+        message.className =
+          'auth-message';
         message.innerText =
-          'ไม่พบ Username นี้';
+          'กำลังเข้าสู่ระบบ...';
 
-        return;
+        const email =
+          await usernameToInternalEmail(username);
 
-      }
+        const { data, error } =
+          await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+          });
 
+        if (error || !data?.user) {
+          throw new Error(
+            'Username หรือรหัสผ่านไม่ถูกต้อง'
+          );
+        }
 
-      if (
-        user.password !==
-        password
-      ) {
+        const profile =
+          await fetchOwnProfile(data.user.id);
 
+        currentProfile = profile;
+
+        await recordLoginHistory(
+          data.user.id
+        );
+
+        message.innerText = '';
+
+        enterProgram(
+          profile.username
+        );
+
+      } catch (error) {
+        await supabaseClient.auth.signOut();
+        currentProfile = null;
+
+        message.className =
+          'auth-message error';
         message.innerText =
-          'รหัสผ่านไม่ถูกต้อง';
-
-        return;
-
+          error?.message ||
+          'เข้าสู่ระบบไม่สำเร็จ';
       }
-
-
-      /*
-        บันทึกประวัติทุกครั้งที่ Login สำเร็จ
-      */
-
-      recordLoginHistoryByKey(
-        userKey
-      );
-
-
-      localStorage.setItem(
-        'winNumberLoggedIn',
-        user.username
-      );
-
-
-      enterProgram(
-        user.username
-      );
-
     }
 
 
     function enterProgram(username) {
-
       document
         .getElementById('loginScreen')
         .classList
         .add('hidden');
-
 
       document
         .getElementById('registerScreen')
         .classList
         .add('hidden');
 
-
       document
         .getElementById('currentUsername')
-        .innerText =
-        username;
-
+        .innerText = username;
 
       const adminBtn =
         document
           .getElementById('adminManageBtn');
 
-
-      if (
-        username === 'admin'
-      ) {
-
-        adminBtn
-          .classList
-          .remove('hidden');
-
+      if (isAdmin()) {
+        adminBtn.classList.remove('hidden');
       } else {
-
-        adminBtn
-          .classList
-          .add('hidden');
-
+        adminBtn.classList.add('hidden');
       }
-
     }
 
 
-    function logoutUser() {
+    async function logoutUser() {
+      await supabaseClient.auth.signOut();
 
-      localStorage.removeItem(
-        'winNumberLoggedIn'
-      );
-
+      currentProfile = null;
+      adminProfilesCache.clear();
 
       closeAdminPanel();
-
       closeUserDetail();
-
 
       document
         .getElementById('adminManageBtn')
         .classList
         .add('hidden');
 
-
       document
         .getElementById('loginPassword')
         .value = '';
-
 
       document
         .getElementById('loginMessage')
         .innerText = '';
 
-
-      document
-        .getElementById('loginScreen')
-        .classList
-        .remove('hidden');
-
+      showLogin();
     }
 
 
-    function checkLogin() {
+    async function checkLogin() {
+      try {
+        const { data } =
+          await supabaseClient.auth.getSession();
 
-      const logged =
-        localStorage.getItem(
-          'winNumberLoggedIn'
+        const session =
+          data?.session;
+
+        if (!session?.user) {
+          showLogin();
+          return;
+        }
+
+        currentProfile =
+          await fetchOwnProfile(
+            session.user.id
+          );
+
+        enterProgram(
+          currentProfile.username
         );
 
-
-      if (!logged) {
-
+      } catch (error) {
+        console.error(error);
+        await supabaseClient.auth.signOut();
+        currentProfile = null;
         showLogin();
-
-        return;
-
       }
-
-
-      const users =
-        getUsers();
-
-
-      const normalizedLogged =
-        String(logged)
-          .trim()
-          .normalize('NFC');
-
-
-      const loggedUserKey =
-        Object.keys(users).find(key => {
-
-          const savedUsername =
-            String(users[key]?.username || '')
-              .trim()
-              .normalize('NFC');
-
-          return savedUsername === normalizedLogged;
-
-        });
-
-
-      if (!loggedUserKey) {
-
-        localStorage.removeItem(
-          'winNumberLoggedIn'
-        );
-
-
-        showLogin();
-
-        return;
-
-      }
-
-
-      enterProgram(
-        users[loggedUserKey].username
-      );
-
     }
 
 
@@ -3409,13 +3305,9 @@
     ======================================== */
 
     function isAdmin() {
-
       return (
-        localStorage.getItem(
-          'winNumberLoggedIn'
-        ) === 'admin'
+        currentProfile?.role === 'admin'
       );
-
     }
 
 
@@ -3423,37 +3315,26 @@
        ADMIN PANEL
     ======================================== */
 
-    function openAdminPanel() {
-
+    async function openAdminPanel() {
       if (!isAdmin()) {
-
-        alert(
-          'คุณไม่มีสิทธิ์ใช้งาน'
-        );
-
+        alert('คุณไม่มีสิทธิ์ใช้งาน');
         return;
-
       }
-
-
-      renderAdminUsers();
-
 
       document
         .getElementById('adminPanel')
         .classList
         .remove('hidden');
 
+      await renderAdminUsers();
     }
 
 
     function closeAdminPanel() {
-
       document
         .getElementById('adminPanel')
         ?.classList
         .add('hidden');
-
     }
 
 
@@ -3462,34 +3343,12 @@
     ======================================== */
 
     function escapeHtml(text) {
-
       return String(text)
-
-        .replaceAll(
-          '&',
-          '&amp;'
-        )
-
-        .replaceAll(
-          '<',
-          '&lt;'
-        )
-
-        .replaceAll(
-          '>',
-          '&gt;'
-        )
-
-        .replaceAll(
-          '"',
-          '&quot;'
-        )
-
-        .replaceAll(
-          "'",
-          '&#039;'
-        );
-
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
     }
 
 
@@ -3497,163 +3356,98 @@
        ADMIN USER GRID
     ======================================== */
 
-    function renderAdminUsers() {
-
-      if (!isAdmin()) {
-
-        return;
-
-      }
-
-
-      const users =
-        getUsers();
-
-
-      const keys =
-        Object.keys(users);
-
+    async function renderAdminUsers() {
+      if (!isAdmin()) return;
 
       const grid =
-        document
-          .getElementById(
-            'adminUserGrid'
-          );
+        document.getElementById(
+          'adminUserGrid'
+        );
 
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;padding:25px;color:#64748b;">
+          กำลังโหลดสมาชิก...
+        </div>
+      `;
 
-      document
-        .getElementById(
-          'adminUserCount'
-        )
-        .innerText =
-        keys.length;
+      const { data, error } =
+        await supabaseClient
+          .from('profiles')
+          .select('id, username, role, created_at')
+          .order('created_at', {
+            ascending: true
+          });
 
-
-      if (
-        keys.length === 0
-      ) {
-
+      if (error) {
         grid.innerHTML = `
-
-          <div
-            style="
-              grid-column:1/-1;
-              padding:30px;
-              color:#64748b;
-            "
-          >
-            ยังไม่มีสมาชิก
+          <div style="grid-column:1/-1;padding:25px;color:#dc2626;">
+            โหลดสมาชิกไม่สำเร็จ: ${escapeHtml(error.message)}
           </div>
-
         `;
-
         return;
-
       }
 
+      const users = data || [];
 
-      /*
-        admin ขึ้นก่อน
-      */
+      users.sort((a, b) => {
+        if (a.role === 'admin') return -1;
+        if (b.role === 'admin') return 1;
+        return String(a.username)
+          .localeCompare(String(b.username));
+      });
 
-      keys.sort(
-        (a, b) => {
+      adminProfilesCache =
+        new Map(
+          users.map(u => [u.id, u])
+        );
 
-          if (a === 'admin') return -1;
+      document
+        .getElementById('adminUserCount')
+        .innerText = users.length;
 
-          if (b === 'admin') return 1;
-
-          return a.localeCompare(b);
-
-        }
-      );
-
+      if (!users.length) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;padding:30px;color:#64748b;">
+            ยังไม่มีสมาชิก
+          </div>
+        `;
+        return;
+      }
 
       let html = '';
 
+      users.forEach(user => {
+        const safeUsername =
+          escapeHtml(user.username);
 
-      keys.forEach(
-        (key) => {
+        html += `
+          <div
+            class="admin-user-mini-card ${user.role === 'admin' ? 'admin-card' : ''}"
+            onclick="openUserDetail('${user.id}')"
+            title="กดเพื่อดูข้อมูล ${safeUsername}"
+          >
+            ${
+              user.role === 'admin'
+              ? '<div class="admin-mini-badge">ADMIN</div>'
+              : ''
+            }
 
-          const user =
-            users[key];
-
-
-          const safeUsername =
-            escapeHtml(
-              user.username
-            );
-
-
-          const encodedKey =
-            encodeURIComponent(key);
-
-
-          html += `
-
-            <div
-              class="
-                admin-user-mini-card
-                ${
-                  user.username === 'admin'
-                    ? 'admin-card'
-                    : ''
-                }
-              "
-              onclick="
-                openUserDetail(
-                  '${encodedKey}'
-                )
-              "
-              title="
-                กดเพื่อดูข้อมูล ${safeUsername}
-              "
-            >
-
-              ${
-                user.username === 'admin'
-                ?
-                `
-                  <div class="admin-mini-badge">
-                    ADMIN
-                  </div>
-                `
-                :
-                ''
-              }
-
-
-              <div class="admin-user-avatar">
-
-                ${
-                  user.username === 'admin'
-                    ? '👑'
-                    : '👤'
-                }
-
-              </div>
-
-
-              <div class="admin-mini-username">
-                ${safeUsername}
-              </div>
-
-
-              <div class="admin-card-hint">
-                กดเพื่อดู
-              </div>
-
+            <div class="admin-user-avatar">
+              ${user.role === 'admin' ? '👑' : '👤'}
             </div>
 
-          `;
+            <div class="admin-mini-username">
+              ${safeUsername}
+            </div>
 
-        }
-      );
+            <div class="admin-card-hint">
+              กดเพื่อดู
+            </div>
+          </div>
+        `;
+      });
 
-
-      grid.innerHTML =
-        html;
-
+      grid.innerHTML = html;
     }
 
 
@@ -3661,535 +3455,51 @@
        OPEN USER DETAIL
     ======================================== */
 
-    function openUserDetail(
-      encodedKey
-    ) {
-
-      if (!isAdmin()) {
-
-        return;
-
-      }
-
-
-      const key =
-        decodeURIComponent(
-          encodedKey
-        );
-
-
-      const users =
-        getUsers();
-
+    async function openUserDetail(userId) {
+      if (!isAdmin()) return;
 
       const user =
-        users[key];
-
+        adminProfilesCache.get(userId);
 
       if (!user) {
-
-        alert(
-          'ไม่พบสมาชิก'
-        );
-
+        alert('ไม่พบสมาชิก');
         return;
-
       }
 
-
-      selectedAdminUserKey =
-        key;
-
+      selectedAdminUserKey = userId;
 
       document
-        .getElementById(
-          'detailDisplayUsername'
-        )
-        .innerText =
-        user.username;
-
+        .getElementById('detailDisplayUsername')
+        .innerText = user.username;
 
       document
-        .getElementById(
-          'detailUsername'
-        )
-        .value =
-        user.username;
+        .getElementById('detailUsername')
+        .value = user.username;
 
-
+      // Supabase Auth ไม่เปิดเผยรหัสผ่านเดิม
       const passwordInput =
-        document
-          .getElementById(
-            'detailPassword'
-          );
+        document.getElementById(
+          'detailPassword'
+        );
 
-
-      passwordInput.type =
-        'password';
-
-
+      passwordInput.type = 'text';
       passwordInput.value =
-        user.password;
-
-
-      document
-        .getElementById(
-          'detailPasswordToggle'
-        )
-        .innerText =
-        '👁 ดู';
-
+        '🔒 Supabase ซ่อนรหัสผ่านเดิม';
 
       document
-        .getElementById(
-          'detailNewPassword'
-        )
-        .value =
-        '';
+        .getElementById('detailPasswordToggle')
+        .innerText = '🔒 ซ่อน';
 
+      document
+        .getElementById('detailNewPassword')
+        .value = '';
 
       let dateText = '-';
 
-
-      if (
-        user.createdAt
-      ) {
-
+      if (user.created_at) {
         try {
-
           dateText =
-            new Date(
-              user.createdAt
-            )
-            .toLocaleString(
-              'th-TH',
-              {
-                dateStyle: 'medium',
-                timeStyle: 'short'
-              }
-            );
-
-        } catch (error) {
-
-          dateText =
-            user.createdAt;
-
-        }
-
-      }
-
-
-      document
-        .getElementById(
-          'detailCreatedAt'
-        )
-        .innerText =
-        dateText;
-
-
-      /*
-        โหลดประวัติ Login ของสมาชิก
-        และพับเก็บไว้ก่อนทุกครั้งที่เปิดรายละเอียด
-      */
-
-      renderLoginHistory(
-        user
-      );
-
-
-      document
-        .getElementById(
-          'loginHistoryBox'
-        )
-        ?.classList
-        .remove('open');
-
-
-      const deleteBtn =
-        document
-          .getElementById(
-            'detailDeleteBtn'
-          );
-
-
-      const protectText =
-        document
-          .getElementById(
-            'detailAdminProtect'
-          );
-
-
-      if (
-        user.username === 'admin'
-      ) {
-
-        deleteBtn.disabled =
-          true;
-
-
-        deleteBtn.innerText =
-          '🔒 ไม่สามารถลบ admin ได้';
-
-
-        protectText
-          .classList
-          .remove('hidden');
-
-      } else {
-
-        deleteBtn.disabled =
-          false;
-
-
-        deleteBtn.innerText =
-          '🗑️ ลบสมาชิก';
-
-
-        protectText
-          .classList
-          .add('hidden');
-
-      }
-
-
-      document
-        .getElementById(
-          'userDetailOverlay'
-        )
-        .classList
-        .remove('hidden');
-
-    }
-
-
-    function closeUserDetail() {
-
-      selectedAdminUserKey =
-        null;
-
-
-      document
-        .getElementById(
-          'userDetailOverlay'
-        )
-        ?.classList
-        .add('hidden');
-
-    }
-
-
-    /* ========================================
-       PASSWORD SHOW
-    ======================================== */
-
-    function toggleDetailPassword() {
-
-      if (!isAdmin()) {
-
-        return;
-
-      }
-
-
-      const input =
-        document
-          .getElementById(
-            'detailPassword'
-          );
-
-
-      const btn =
-        document
-          .getElementById(
-            'detailPasswordToggle'
-          );
-
-
-      if (
-        input.type === 'password'
-      ) {
-
-        input.type =
-          'text';
-
-
-        btn.innerText =
-          '🙈 ซ่อน';
-
-      } else {
-
-        input.type =
-          'password';
-
-
-        btn.innerText =
-          '👁 ดู';
-
-      }
-
-    }
-
-
-    /* ========================================
-       SAVE NEW PASSWORD
-    ======================================== */
-
-    function saveDetailPassword() {
-
-      if (!isAdmin()) {
-
-        alert(
-          'คุณไม่มีสิทธิ์ใช้งาน'
-        );
-
-        return;
-
-      }
-
-
-      if (
-        !selectedAdminUserKey
-      ) {
-
-        return;
-
-      }
-
-
-      const input =
-        document
-          .getElementById(
-            'detailNewPassword'
-          );
-
-
-      const newPassword =
-        input.value;
-
-
-      if (!newPassword) {
-
-        alert(
-          'กรุณากรอกรหัสผ่านใหม่'
-        );
-
-        return;
-
-      }
-
-
-      if (
-        newPassword.length < 4
-      ) {
-
-        alert(
-          'รหัสผ่านต้องมีอย่างน้อย 4 ตัว'
-        );
-
-        return;
-
-      }
-
-
-      const users =
-        getUsers();
-
-
-      const user =
-        users[
-          selectedAdminUserKey
-        ];
-
-
-      if (!user) {
-
-        alert(
-          'ไม่พบสมาชิก'
-        );
-
-        closeUserDetail();
-
-        renderAdminUsers();
-
-        return;
-
-      }
-
-
-      const confirmChange =
-        confirm(
-          `ต้องการเปลี่ยนรหัสผ่านของ "${user.username}" ใช่หรือไม่?`
-        );
-
-
-      if (!confirmChange) {
-
-        return;
-
-      }
-
-
-      user.password =
-        newPassword;
-
-
-      saveUsers(users);
-
-
-      document
-        .getElementById(
-          'detailPassword'
-        )
-        .value =
-        newPassword;
-
-
-      document
-        .getElementById(
-          'detailPassword'
-        )
-        .type =
-        'password';
-
-
-      document
-        .getElementById(
-          'detailPasswordToggle'
-        )
-        .innerText =
-        '👁 ดู';
-
-
-      input.value =
-        '';
-
-
-      showToast(
-        `เปลี่ยนรหัสผ่าน ${user.username} สำเร็จ`
-      );
-
-    }
-
-
-
-
-    /* ========================================
-       LOGIN HISTORY DISPLAY
-    ======================================== */
-
-    function toggleLoginHistory() {
-
-      const box =
-        document.getElementById(
-          'loginHistoryBox'
-        );
-
-
-      if (!box) {
-
-        return;
-
-      }
-
-
-      box.classList.toggle(
-        'open'
-      );
-
-    }
-
-
-    function renderLoginHistory(user) {
-
-      const list =
-        document.getElementById(
-          'loginHistoryList'
-        );
-
-
-      const count =
-        document.getElementById(
-          'loginHistoryCount'
-        );
-
-
-      const clearBtn =
-        document.getElementById(
-          'clearLoginHistoryBtn'
-        );
-
-
-      if (
-        !list ||
-        !count
-      ) {
-
-        return;
-
-      }
-
-
-      const history =
-        Array.isArray(
-          user?.loginHistory
-        )
-          ? user.loginHistory
-          : [];
-
-
-      count.innerText =
-        history.length;
-
-
-      if (
-        history.length === 0
-      ) {
-
-        list.innerHTML = `
-
-          <div class="login-history-empty">
-            📭 ยังไม่มีประวัติการเข้าสู่ระบบ
-          </div>
-
-        `;
-
-
-        if (clearBtn) {
-
-          clearBtn.style.display =
-            'none';
-
-        }
-
-
-        return;
-
-      }
-
-
-      if (clearBtn) {
-
-        clearBtn.style.display =
-          'block';
-
-      }
-
-
-      let html = '';
-
-
-      history.forEach(
-        (item, index) => {
-
-          let dateText = '-';
-
-
-          try {
-
-            dateText =
-              new Date(
-                item.loginAt
-              )
+            new Date(user.created_at)
               .toLocaleString(
                 'th-TH',
                 {
@@ -4197,154 +3507,344 @@
                   timeStyle: 'short'
                 }
               );
-
-          } catch (error) {
-
-            dateText =
-              item.loginAt || '-';
-
-          }
-
-
-          html += `
-
-            <div
-              class="
-                login-history-item
-                ${
-                  index === 0
-                    ? 'latest'
-                    : ''
-                }
-              "
-            >
-
-              <div class="login-history-icon">
-                ${
-                  index === 0
-                    ? '🟢'
-                    : '🔵'
-                }
-              </div>
-
-              <div class="login-history-main">
-
-                <div class="login-history-item-title">
-                  ${
-                    index === 0
-                      ? 'เข้าสู่ระบบล่าสุด'
-                      : `เข้าสู่ระบบครั้งก่อน #${index}`
-                  }
-                </div>
-
-                <div class="login-history-time">
-                  ${dateText}
-                </div>
-
-              </div>
-
-            </div>
-
-          `;
-
+        } catch (_) {
+          dateText = user.created_at;
         }
-      );
+      }
 
+      document
+        .getElementById('detailCreatedAt')
+        .innerText = dateText;
 
-      list.innerHTML =
-        html;
+      const history =
+        await loadLoginHistory(userId);
 
+      renderLoginHistory({
+        loginHistory: history.map(row => ({
+          loginAt: row.login_at
+        }))
+      });
+
+      document
+        .getElementById('loginHistoryBox')
+        ?.classList
+        .remove('open');
+
+      const deleteBtn =
+        document.getElementById(
+          'detailDeleteBtn'
+        );
+
+      const protectText =
+        document.getElementById(
+          'detailAdminProtect'
+        );
+
+      if (user.role === 'admin') {
+        deleteBtn.disabled = true;
+        deleteBtn.innerText =
+          '🔒 ไม่สามารถลบ admin ได้';
+        protectText.classList.remove('hidden');
+      } else {
+        deleteBtn.disabled = false;
+        deleteBtn.innerText =
+          '🗑️ ลบสมาชิก';
+        protectText.classList.add('hidden');
+      }
+
+      document
+        .getElementById('userDetailOverlay')
+        .classList
+        .remove('hidden');
     }
 
 
-    function clearCurrentLoginHistory() {
+    function closeUserDetail() {
+      selectedAdminUserKey = null;
 
+      document
+        .getElementById('userDetailOverlay')
+        ?.classList
+        .add('hidden');
+    }
+
+
+    /* ========================================
+       PASSWORD DISPLAY
+    ======================================== */
+
+    function toggleDetailPassword() {
+      alert(
+        'Supabase Auth ไม่อนุญาตให้อ่านรหัสผ่านเดิมของสมาชิก เพื่อความปลอดภัย\n\nadmin สามารถตั้งรหัสผ่านใหม่ได้จากช่องด้านล่าง'
+      );
+    }
+
+
+    /* ========================================
+       ADMIN EDGE FUNCTION
+    ======================================== */
+
+    async function callAdminFunction(payload) {
+      const { data, error } =
+        await supabaseClient.functions.invoke(
+          'admin-user',
+          {
+            body: payload
+          }
+        );
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data?.ok) {
+        throw new Error(
+          data?.error ||
+          'คำสั่ง admin ไม่สำเร็จ'
+        );
+      }
+
+      return data;
+    }
+
+
+    /* ========================================
+       SAVE NEW PASSWORD
+    ======================================== */
+
+    async function saveDetailPassword() {
       if (!isAdmin()) {
-
+        alert('คุณไม่มีสิทธิ์ใช้งาน');
         return;
-
       }
 
+      if (!selectedAdminUserKey) return;
 
-      if (
-        !selectedAdminUserKey
-      ) {
+      const input =
+        document.getElementById(
+          'detailNewPassword'
+        );
 
+      const newPassword =
+        input.value;
+
+      if (!newPassword) {
+        alert('กรุณากรอกรหัสผ่านใหม่');
         return;
-
       }
 
-
-      const users =
-        getUsers();
-
+      if (newPassword.length < 6) {
+        alert('รหัสผ่านต้องมีอย่างน้อย 6 ตัว');
+        return;
+      }
 
       const user =
-        users[
+        adminProfilesCache.get(
           selectedAdminUserKey
-        ];
-
+        );
 
       if (!user) {
-
+        alert('ไม่พบสมาชิก');
         return;
-
       }
 
+      const ok =
+        confirm(
+          `ต้องการเปลี่ยนรหัสผ่านของ "${user.username}" ใช่หรือไม่?`
+        );
+
+      if (!ok) return;
+
+      try {
+        await callAdminFunction({
+          action: 'reset_password',
+          user_id: user.id,
+          password: newPassword
+        });
+
+        input.value = '';
+
+        showToast(
+          `เปลี่ยนรหัสผ่าน ${user.username} สำเร็จ`
+        );
+      } catch (error) {
+        alert(
+          'เปลี่ยนรหัสผ่านไม่สำเร็จ\n\n' +
+          (error?.message || error)
+        );
+      }
+    }
+
+
+    /* ========================================
+       LOGIN HISTORY DISPLAY
+    ======================================== */
+
+    function toggleLoginHistory() {
+      const box =
+        document.getElementById(
+          'loginHistoryBox'
+        );
+
+      if (!box) return;
+
+      box.classList.toggle('open');
+    }
+
+
+    async function loadLoginHistory(userId) {
+      const { data, error } =
+        await supabaseClient
+          .from('login_history')
+          .select('id, login_at')
+          .eq('user_id', userId)
+          .order('login_at', {
+            ascending: false
+          })
+          .limit(100);
+
+      if (error) {
+        console.warn(error);
+        return [];
+      }
+
+      return data || [];
+    }
+
+
+    function renderLoginHistory(user) {
+      const list =
+        document.getElementById(
+          'loginHistoryList'
+        );
+
+      const count =
+        document.getElementById(
+          'loginHistoryCount'
+        );
+
+      const clearBtn =
+        document.getElementById(
+          'clearLoginHistoryBtn'
+        );
+
+      if (!list || !count) return;
 
       const history =
-        Array.isArray(
-          user.loginHistory
-        )
+        Array.isArray(user?.loginHistory)
           ? user.loginHistory
           : [];
 
+      count.innerText = history.length;
 
-      if (
-        history.length === 0
-      ) {
+      if (!history.length) {
+        list.innerHTML = `
+          <div class="login-history-empty">
+            📭 ยังไม่มีประวัติการเข้าสู่ระบบ
+          </div>
+        `;
+
+        if (clearBtn) {
+          clearBtn.style.display = 'none';
+        }
 
         return;
-
       }
 
+      if (clearBtn) {
+        clearBtn.style.display = 'block';
+      }
+
+      let html = '';
+
+      history.forEach((item, index) => {
+        let dateText = '-';
+
+        try {
+          dateText =
+            new Date(item.loginAt)
+              .toLocaleString(
+                'th-TH',
+                {
+                  dateStyle: 'medium',
+                  timeStyle: 'short'
+                }
+              );
+        } catch (_) {
+          dateText = item.loginAt || '-';
+        }
+
+        html += `
+          <div class="login-history-item ${index === 0 ? 'latest' : ''}">
+            <div class="login-history-icon">
+              ${index === 0 ? '🟢' : '🔵'}
+            </div>
+
+            <div class="login-history-main">
+              <div class="login-history-item-title">
+                ${
+                  index === 0
+                  ? 'เข้าสู่ระบบล่าสุด'
+                  : `เข้าสู่ระบบครั้งก่อน #${index}`
+                }
+              </div>
+
+              <div class="login-history-time">
+                ${dateText}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      list.innerHTML = html;
+    }
+
+
+    async function clearCurrentLoginHistory() {
+      if (!isAdmin()) return;
+      if (!selectedAdminUserKey) return;
+
+      const user =
+        adminProfilesCache.get(
+          selectedAdminUserKey
+        );
+
+      if (!user) return;
 
       const ok =
         confirm(
           `ต้องการล้างประวัติการเข้าสู่ระบบของ "${user.username}" ทั้งหมดใช่หรือไม่?`
         );
 
+      if (!ok) return;
 
-      if (!ok) {
+      const { error } =
+        await supabaseClient
+          .from('login_history')
+          .delete()
+          .eq('user_id', user.id);
 
+      if (error) {
+        alert(
+          'ล้างประวัติไม่สำเร็จ: ' +
+          error.message
+        );
         return;
-
       }
 
-
-      user.loginHistory = [];
-
-
-      saveUsers(users);
-
-
-      renderLoginHistory(
-        user
-      );
-
+      renderLoginHistory({
+        loginHistory: []
+      });
 
       document
-        .getElementById(
-          'loginHistoryBox'
-        )
+        .getElementById('loginHistoryBox')
         ?.classList
         .remove('open');
-
 
       showToast(
         `ล้างประวัติของ ${user.username} แล้ว`
       );
-
     }
 
 
@@ -4352,97 +3852,54 @@
        DELETE MEMBER
     ======================================== */
 
-    function deleteCurrentUser() {
-
+    async function deleteCurrentUser() {
       if (!isAdmin()) {
-
-        alert(
-          'คุณไม่มีสิทธิ์ใช้งาน'
-        );
-
+        alert('คุณไม่มีสิทธิ์ใช้งาน');
         return;
-
       }
 
-
-      if (
-        !selectedAdminUserKey
-      ) {
-
-        return;
-
-      }
-
-
-      const users =
-        getUsers();
-
+      if (!selectedAdminUserKey) return;
 
       const user =
-        users[
+        adminProfilesCache.get(
           selectedAdminUserKey
-        ];
-
+        );
 
       if (!user) {
-
-        alert(
-          'ไม่พบสมาชิก'
-        );
-
+        alert('ไม่พบสมาชิก');
         return;
-
       }
 
-
-      if (
-        user.username === 'admin'
-      ) {
-
-        alert(
-          'ไม่สามารถลบบัญชี admin ได้'
-        );
-
+      if (user.role === 'admin') {
+        alert('ไม่สามารถลบบัญชี admin ได้');
         return;
-
       }
 
-
-      const username =
-        user.username;
-
-
-      const confirmDelete =
+      const ok =
         confirm(
-          `ยืนยันลบสมาชิก "${username}" ?\n\nเมื่อลบแล้วบัญชีนี้จะไม่สามารถเข้าสู่ระบบได้`
+          `ยืนยันลบสมาชิก "${user.username}" ?\n\nเมื่อลบแล้วบัญชีนี้จะไม่สามารถเข้าสู่ระบบได้`
         );
 
+      if (!ok) return;
 
-      if (!confirmDelete) {
+      try {
+        await callAdminFunction({
+          action: 'delete_user',
+          user_id: user.id
+        });
 
-        return;
+        closeUserDetail();
+        await renderAdminUsers();
 
+        showToast(
+          `ลบสมาชิก ${user.username} สำเร็จ`
+        );
+      } catch (error) {
+        alert(
+          'ลบสมาชิกไม่สำเร็จ\n\n' +
+          (error?.message || error)
+        );
       }
-
-
-      delete users[
-        selectedAdminUserKey
-      ];
-
-
-      saveUsers(users);
-
-
-      closeUserDetail();
-
-
-      renderAdminUsers();
-
-
-      showToast(
-        `ลบสมาชิก ${username} สำเร็จ`
-      );
-
     }
 
 
@@ -6551,8 +6008,6 @@
     /* ========================================
        START
     ======================================== */
-
-    createDefaultAdmin();
 
     renderPresetSets();
 
