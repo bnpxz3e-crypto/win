@@ -3903,27 +3903,43 @@
     ======================================== */
 
     async function callAdminFunction(payload) {
-      const { data, error } =
-        await supabaseClient.functions.invoke(
-          'admin-user',
-          {
-            body: payload
-          }
-        );
+  const {
+    data: { session },
+    error: sessionError
+  } = await supabaseClient.auth.getSession();
 
-      if (error) {
-        throw error;
+  if (sessionError) {
+    throw sessionError;
+  }
+
+  if (!session?.access_token) {
+    throw new Error('ไม่พบ Access Token กรุณาเข้าสู่ระบบใหม่');
+  }
+
+  const { data, error } =
+    await supabaseClient.functions.invoke(
+      'admin-user',
+      {
+        body: payload,
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       }
+    );
 
-      if (!data?.ok) {
-        throw new Error(
-          data?.error ||
-          'คำสั่ง admin ไม่สำเร็จ'
-        );
-      }
+  if (error) {
+    throw error;
+  }
 
-      return data;
-    }
+  if (!data?.ok) {
+    throw new Error(
+      data?.error ||
+      'คำสั่ง admin ไม่สำเร็จ'
+    );
+  }
+
+  return data;
+}
 
 
     /* ========================================
