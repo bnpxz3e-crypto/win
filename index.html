@@ -364,7 +364,8 @@
     }
 
 
-    #adminManageBtn {
+    #adminManageBtn,
+    #adminRegisterBtn {
       background:
         linear-gradient(
           135deg,
@@ -375,6 +376,39 @@
       color: white;
 
       border-color: #7c3aed;
+    }
+
+    #adminRegisterBtn {
+      background:
+        linear-gradient(
+          135deg,
+          #059669,
+          #10b981
+        );
+
+      border-color: #059669;
+    }
+
+    .register-only-screen {
+      padding: 0;
+      background: #000;
+    }
+
+    .register-video-fullscreen {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .register-video-fullscreen:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+      background: #000;
     }
 
 
@@ -2136,93 +2170,22 @@
 
   <div
     id="registerScreen"
-    class="auth-screen hidden"
+    class="auth-screen register-only-screen hidden"
   >
 
-    <div class="auth-box">
-
-      <div class="auth-logo">
-        📝
-      </div>
-
-
-      <h2 class="auth-title">
-        สมัครสมาชิก
-      </h2>
-
-
-      <div class="auth-subtitle">
-        สร้างบัญชีสำหรับเข้าใช้งานโปรแกรม
-      </div>
-
-
-      <div class="auth-group">
-
-        <label>
-          ชื่อผู้ใช้งาน
-        </label>
-
-        <input
-          id="registerUsername"
-          type="text"
-          placeholder="Username"
-        >
-
-      </div>
-
-
-      <div class="auth-group">
-
-        <label>
-          รหัสผ่าน
-        </label>
-
-        <input
-          id="registerPassword"
-          type="password"
-          placeholder="Password"
-        >
-
-      </div>
-
-
-      <div class="auth-group">
-
-        <label>
-          ยืนยันรหัสผ่าน
-        </label>
-
-        <input
-          id="registerPasswordConfirm"
-          type="password"
-          placeholder="Confirm Password"
-        >
-
-      </div>
-
-
-      <button
-        class="auth-login-btn"
-        onclick="registerUser()"
+    <video
+      id="registerVideo"
+      class="register-video-fullscreen"
+      controls
+      playsinline
+      preload="auto"
+    >
+      <source
+        src="https://raw.githubusercontent.com/bnpxz3e-crypto/win/main/202609121812.mp4"
+        type="video/mp4"
       >
-        ✅ สมัครสมาชิก
-      </button>
-
-
-      <button
-        class="auth-back"
-        onclick="showLogin()"
-      >
-        ← กลับหน้าเข้าสู่ระบบ
-      </button>
-
-
-      <div
-        id="registerMessage"
-        class="auth-message"
-      ></div>
-
-    </div>
+      เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
+    </video>
 
   </div>
 
@@ -2291,6 +2254,15 @@
         onclick="openAdminPanel()"
       >
         👑 จัดการสมาชิก
+      </button>
+
+
+      <button
+        class="tab-btn hidden"
+        id="adminRegisterBtn"
+        onclick="showRegister()"
+      >
+        📝 สมัครสมาชิก
       </button>
 
     </div>
@@ -3024,6 +2996,11 @@
         .classList
         .add('hidden');
 
+      document
+        .getElementById('adminRegisterBtn')
+        .classList
+        .add('hidden');
+
       showLogin();
 
       const message =
@@ -3155,48 +3132,60 @@
     ======================================== */
 
     function showLogin() {
-      document
-        .getElementById('registerScreen')
-        .classList
-        .add('hidden');
+      const registerScreen =
+        document.getElementById('registerScreen');
+
+      const registerVideo =
+        document.getElementById('registerVideo');
+
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+
+      if (registerVideo) {
+        registerVideo.pause();
+        registerVideo.currentTime = 0;
+      }
+
+      registerScreen.classList.add('hidden');
 
       document
         .getElementById('loginScreen')
         .classList
         .remove('hidden');
-
-      document
-        .getElementById('registerMessage')
-        .innerText = '';
     }
 
 
-    function showRegister() {
+    async function showRegister() {
       document
         .getElementById('loginScreen')
         .classList
         .add('hidden');
 
-      document
-        .getElementById('registerScreen')
-        .classList
-        .remove('hidden');
+      const registerScreen =
+        document.getElementById('registerScreen');
 
-      document
-        .getElementById('registerUsername')
-        .value = '';
+      const registerVideo =
+        document.getElementById('registerVideo');
 
-      document
-        .getElementById('registerPassword')
-        .value = '';
+      registerScreen.classList.remove('hidden');
 
-      document
-        .getElementById('registerPasswordConfirm')
-        .value = '';
+      if (registerVideo) {
+        registerVideo.currentTime = 0;
 
-      document
-        .getElementById('registerMessage')
-        .innerText = '';
+        // ขอ Fullscreen ทันทีจากการกดปุ่ม เพื่อให้ browser อนุญาตได้ง่ายที่สุด
+        try {
+          if (!document.fullscreenElement && registerVideo.requestFullscreen) {
+            registerVideo.requestFullscreen().catch(() => {});
+          }
+        } catch (_) {}
+
+        try {
+          await registerVideo.play();
+        } catch (_) {
+          // ถ้า browser บล็อก autoplay ให้ผู้ใช้กด Play จาก controls ได้
+        }
+      }
     }
 
 
@@ -3494,10 +3483,16 @@
         document
           .getElementById('adminManageBtn');
 
+      const adminRegisterBtn =
+        document
+          .getElementById('adminRegisterBtn');
+
       if (isAdmin()) {
         adminBtn.classList.remove('hidden');
+        adminRegisterBtn.classList.remove('hidden');
       } else {
         adminBtn.classList.add('hidden');
+        adminRegisterBtn.classList.add('hidden');
       }
     }
 
@@ -3530,6 +3525,11 @@
 
       document
         .getElementById('adminManageBtn')
+        .classList
+        .add('hidden');
+
+      document
+        .getElementById('adminRegisterBtn')
         .classList
         .add('hidden');
 
@@ -3585,11 +3585,11 @@
             return;
           }
         } else {
-          // สำหรับผู้ใช้เดิมก่อนเพิ่มระบบ single-session
-          // หรือ storage token หาย ให้ session นี้เป็นเครื่องล่าสุด
-          await claimSingleSession(
-            session.user.id
-          );
+          // สำคัญ: การ Refresh หน้าเว็บห้าม claim session ใหม่เด็ดขาด
+          // ถ้าไม่มี token ของเครื่องนี้ ให้ถือว่า session นี้ไม่ใช่เครื่องล่าสุด
+          // และบังคับออกจากระบบ เพื่อไม่ให้เครื่องเก่าแย่ง session กลับจากเครื่องใหม่
+          await forceLogoutBecauseAnotherLogin();
+          return;
         }
 
         await startSingleSessionMonitor(
@@ -3903,43 +3903,27 @@
     ======================================== */
 
     async function callAdminFunction(payload) {
-  const {
-    data: { session },
-    error: sessionError
-  } = await supabaseClient.auth.getSession();
+      const { data, error } =
+        await supabaseClient.functions.invoke(
+          'admin-user',
+          {
+            body: payload
+          }
+        );
 
-  if (sessionError) {
-    throw sessionError;
-  }
-
-  if (!session?.access_token) {
-    throw new Error('ไม่พบ Access Token กรุณาเข้าสู่ระบบใหม่');
-  }
-
-  const { data, error } =
-    await supabaseClient.functions.invoke(
-      'admin-user',
-      {
-        body: payload,
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
+      if (error) {
+        throw error;
       }
-    );
 
-  if (error) {
-    throw error;
-  }
+      if (!data?.ok) {
+        throw new Error(
+          data?.error ||
+          'คำสั่ง admin ไม่สำเร็จ'
+        );
+      }
 
-  if (!data?.ok) {
-    throw new Error(
-      data?.error ||
-      'คำสั่ง admin ไม่สำเร็จ'
-    );
-  }
-
-  return data;
-}
+      return data;
+    }
 
 
     /* ========================================
@@ -5860,27 +5844,6 @@
         }
       );
 
-
-    document
-      .getElementById(
-        'registerPasswordConfirm'
-      )
-      .addEventListener(
-        'keydown',
-        function(e) {
-
-          if (
-            e.key === 'Enter'
-          ) {
-
-            e.preventDefault();
-
-            registerUser();
-
-          }
-
-        }
-      );
 
 
     /* ========================================
