@@ -364,8 +364,7 @@
     }
 
 
-    #adminManageBtn,
-    #adminRegisterBtn {
+    #adminManageBtn {
       background:
         linear-gradient(
           135deg,
@@ -376,17 +375,6 @@
       color: white;
 
       border-color: #7c3aed;
-    }
-
-    #adminRegisterBtn {
-      background:
-        linear-gradient(
-          135deg,
-          #059669,
-          #10b981
-        );
-
-      border-color: #059669;
     }
 
     .register-only-screen {
@@ -893,6 +881,138 @@
 
       box-shadow:
         0 5px 15px rgba(220, 38, 38, 0.3);
+    }
+
+
+    .admin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .admin-register-open-btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 5px 14px rgba(16, 185, 129, 0.25);
+      white-space: nowrap;
+    }
+
+    .admin-register-open-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .admin-register-box {
+      margin: 14px 0 18px;
+      padding: 18px;
+      border: 1px solid #dbeafe;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #f8fbff, #ffffff);
+    }
+
+    .admin-register-box.hidden {
+      display: none;
+    }
+
+    .admin-register-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: #059669;
+      margin-bottom: 12px;
+    }
+
+    .admin-register-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .admin-register-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .admin-register-grid label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .admin-register-grid input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 13px;
+      border: 1px solid #cbd5e1;
+      border-radius: 11px;
+      font-size: 15px;
+      outline: none;
+      background: #fff;
+    }
+
+    .admin-register-grid input:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+    }
+
+    .admin-register-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .admin-register-submit,
+    .admin-register-cancel {
+      flex: 1;
+      border: 0;
+      border-radius: 11px;
+      padding: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .admin-register-submit {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+    }
+
+    .admin-register-cancel {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .admin-register-message {
+      margin-top: 10px;
+      min-height: 20px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 640px) {
+      .admin-panel-header {
+        align-items: flex-start;
+      }
+
+      .admin-header-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .admin-register-open-btn {
+        padding: 9px 10px;
+        font-size: 13px;
+      }
+
+      .admin-register-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-register-grid .full {
+        grid-column: auto;
+      }
     }
 
 
@@ -2257,14 +2377,6 @@
       </button>
 
 
-      <button
-        class="tab-btn hidden"
-        id="adminRegisterBtn"
-        onclick="showRegister()"
-      >
-        📝 สมัครสมาชิก
-      </button>
-
     </div>
 
 
@@ -2478,15 +2590,85 @@
         </div>
 
 
-        <button
-          class="admin-close-btn"
-          onclick="closeAdminPanel()"
-        >
-          ✕
-        </button>
+        <div class="admin-header-actions">
+          <button
+            class="admin-register-open-btn"
+            onclick="toggleAdminRegister()"
+          >
+            ✨ สมัครสมาชิก
+          </button>
+
+          <button
+            class="admin-close-btn"
+            onclick="closeAdminPanel()"
+          >
+            ✕
+          </button>
+        </div>
 
       </div>
 
+
+      <div
+        id="adminRegisterBox"
+        class="admin-register-box hidden"
+      >
+        <div class="admin-register-title">
+          ✨ สมัครสมาชิกใหม่
+        </div>
+
+        <div class="admin-register-grid">
+          <div class="full">
+            <label for="adminRegisterUsername">ชื่อผู้ใช้งาน</label>
+            <input
+              id="adminRegisterUsername"
+              type="text"
+              placeholder="Username"
+              autocomplete="off"
+            >
+          </div>
+
+          <div>
+            <label for="adminRegisterPassword">รหัสผ่าน</label>
+            <input
+              id="adminRegisterPassword"
+              type="password"
+              placeholder="Password"
+              autocomplete="new-password"
+            >
+          </div>
+
+          <div>
+            <label for="adminRegisterPasswordConfirm">ยืนยันรหัสผ่าน</label>
+            <input
+              id="adminRegisterPasswordConfirm"
+              type="password"
+              placeholder="Confirm Password"
+              autocomplete="new-password"
+            >
+          </div>
+        </div>
+
+        <div class="admin-register-actions">
+          <button
+            class="admin-register-submit"
+            onclick="adminCreateUser()"
+          >
+            ✅ สร้างสมาชิก
+          </button>
+          <button
+            class="admin-register-cancel"
+            onclick="toggleAdminRegister(false)"
+          >
+            ปิด
+          </button>
+        </div>
+
+        <div
+          id="adminRegisterMessage"
+          class="admin-register-message"
+        ></div>
+      </div>
 
       <div class="admin-summary">
 
@@ -2996,11 +3178,6 @@
         .classList
         .add('hidden');
 
-      document
-        .getElementById('adminRegisterBtn')
-        .classList
-        .add('hidden');
-
       showLogin();
 
       const message =
@@ -3483,16 +3660,10 @@
         document
           .getElementById('adminManageBtn');
 
-      const adminRegisterBtn =
-        document
-          .getElementById('adminRegisterBtn');
-
       if (isAdmin()) {
         adminBtn.classList.remove('hidden');
-        adminRegisterBtn.classList.remove('hidden');
       } else {
         adminBtn.classList.add('hidden');
-        adminRegisterBtn.classList.add('hidden');
       }
     }
 
@@ -3525,11 +3696,6 @@
 
       document
         .getElementById('adminManageBtn')
-        .classList
-        .add('hidden');
-
-      document
-        .getElementById('adminRegisterBtn')
         .classList
         .add('hidden');
 
@@ -3633,6 +3799,100 @@
        ADMIN PANEL
     ======================================== */
 
+    function toggleAdminRegister(force) {
+      if (!isAdmin()) {
+        alert('คุณไม่มีสิทธิ์ใช้งาน');
+        return;
+      }
+
+      const box = document.getElementById('adminRegisterBox');
+      if (!box) return;
+
+      const shouldOpen =
+        typeof force === 'boolean'
+          ? force
+          : box.classList.contains('hidden');
+
+      if (shouldOpen) {
+        box.classList.remove('hidden');
+        document.getElementById('adminRegisterUsername')?.focus();
+      } else {
+        box.classList.add('hidden');
+        document.getElementById('adminRegisterUsername').value = '';
+        document.getElementById('adminRegisterPassword').value = '';
+        document.getElementById('adminRegisterPasswordConfirm').value = '';
+        document.getElementById('adminRegisterMessage').innerText = '';
+      }
+    }
+
+    async function adminCreateUser() {
+      if (!isAdmin()) {
+        alert('คุณไม่มีสิทธิ์ใช้งาน');
+        return;
+      }
+
+      const username = document.getElementById('adminRegisterUsername').value.trim();
+      const password = document.getElementById('adminRegisterPassword').value;
+      const confirmPassword = document.getElementById('adminRegisterPasswordConfirm').value;
+      const message = document.getElementById('adminRegisterMessage');
+
+      message.innerText = '';
+      message.style.color = '#dc2626';
+
+      if (!username) {
+        message.innerText = 'กรุณากรอกชื่อผู้ใช้งาน';
+        return;
+      }
+      if (username.length < 3) {
+        message.innerText = 'ชื่อผู้ใช้งานต้องมีอย่างน้อย 3 ตัว';
+        return;
+      }
+      if (username.length > 40) {
+        message.innerText = 'ชื่อผู้ใช้งานต้องไม่เกิน 40 ตัวอักษร';
+        return;
+      }
+      if (normalizeUsername(username) === 'admin') {
+        message.innerText = 'ไม่สามารถสมัครชื่อ admin ได้';
+        return;
+      }
+      if (!password) {
+        message.innerText = 'กรุณากรอกรหัสผ่าน';
+        return;
+      }
+      if (password.length < 6) {
+        message.innerText = 'รหัสผ่านต้องมีอย่างน้อย 6 ตัว';
+        return;
+      }
+      if (password !== confirmPassword) {
+        message.innerText = 'รหัสผ่านทั้งสองช่องไม่ตรงกัน';
+        return;
+      }
+
+      try {
+        message.style.color = '#64748b';
+        message.innerText = 'กำลังสร้างสมาชิก...';
+
+        await callAdminFunction({
+          action: 'create_user',
+          username,
+          password
+        });
+
+        message.style.color = '#059669';
+        message.innerText = `สร้างสมาชิก ${username} สำเร็จ`;
+
+        document.getElementById('adminRegisterUsername').value = '';
+        document.getElementById('adminRegisterPassword').value = '';
+        document.getElementById('adminRegisterPasswordConfirm').value = '';
+
+        await renderAdminUsers();
+      } catch (error) {
+        message.style.color = '#dc2626';
+        message.innerText = error?.message || 'สร้างสมาชิกไม่สำเร็จ';
+      }
+    }
+
+
     async function openAdminPanel() {
       if (!isAdmin()) {
         alert('คุณไม่มีสิทธิ์ใช้งาน');
@@ -3653,6 +3913,9 @@
         .getElementById('adminPanel')
         ?.classList
         .add('hidden');
+
+      const box = document.getElementById('adminRegisterBox');
+      if (box) box.classList.add('hidden');
     }
 
 
