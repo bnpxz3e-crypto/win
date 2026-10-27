@@ -2195,26 +2195,7 @@
 
     }
 
-  
-/* ===== WIN PRO UI v2: layout only; original business logic remains ===== */
-:root{--navy:#061529;--blue:#087bfa;--hot:#ff315e;--edge:#dfe8f4}
-body{padding:0!important;background:radial-gradient(circle at 22% 3%,#233958 0%,transparent 35%),linear-gradient(150deg,#051326,#0d2d41 90%)!important;color:#fff;text-align:left!important}
-body::before{content:"";height:3px;position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg,#f62f71,#2563eb,#13c4f1);z-index:30}
-.topbar{min-height:80px;padding:12px clamp(15px,3vw,44px);display:flex;justify-content:space-between;align-items:center;gap:16px;background:rgba(3,15,32,.92);border-bottom:1px solid #ffffff18;position:relative;z-index:20;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:13px;color:white}.brand-orb{font-size:38px;line-height:1;filter:drop-shadow(0 3px 12px #f43f5e80)}.brand strong{font-size:clamp(19px,2vw,27px);line-height:1.2}.brand strong em{color:#ff4772;font-style:normal}.brand small{display:block;color:#9db1c9;font-size:12px;margin-top:3px}
-.topbar-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.switch-wrap{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;color:#fff;white-space:nowrap;cursor:pointer}.switch-wrap input{position:absolute;opacity:0;width:1px;height:1px}.switch-track{display:inline-flex;width:54px;height:29px;background:#728198;border-radius:99px;align-items:center;padding:4px;transition:background .2s}.switch-track:before{content:"";width:21px;height:21px;border-radius:50%;background:white;box-shadow:0 2px 5px #0004;transition:transform .2s}.switch-wrap input:checked+.switch-track{background:#16bf68}.switch-wrap input:checked+.switch-track:before{transform:translateX(25px)}.switch-wrap input:focus-visible+.switch-track{outline:3px solid #93c5fd;outline-offset:2px}.top-divider{height:26px;width:1px;background:#ffffff30}.top-user{display:flex;align-items:center;gap:8px}.avatar{height:38px;width:38px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#1473ef,#3998ff);font-size:19px}.top-user-name{font-size:13px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.top-id{font-size:11px;color:#a7bbcf}.vip-chip{background:#efae15;color:#fff;border-radius:7px;padding:3px 7px;font-weight:900;font-size:11px}.header-logout{background:#f12743!important;color:white!important;margin:0!important;padding:10px 16px!important}
-.site-workspace{max-width:1640px;margin:23px auto 50px;padding:0 20px;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;transition:max-width .25s}.site-workspace.with-calc{padding-left:300px}.site-workspace.with-calc.is-calc-collapsed{padding-left:70px}.site-workspace:not(.with-calc){padding-left:20px}
-.container{max-width:none!important;width:100%;margin:0!important;padding:15px 16px 24px!important;box-shadow:0 12px 50px #0003!important;border:1px solid #d7e4f4;border-radius:19px!important;min-width:0}
-.hero-banner{height:165px;border-radius:14px;background:radial-gradient(circle at 77% 50%,#5332b6,transparent 39%),radial-gradient(circle at 5% 100%,#b91c52,transparent 30%),linear-gradient(110deg,#050f28,#11153c 55%,#07122d);color:white;display:flex;justify-content:space-between;align-items:center;text-align:left;padding:20px clamp(20px,4vw,50px);position:relative;overflow:hidden;margin-bottom:17px}.hero-banner:after{content:"";position:absolute;inset:auto -10% -60% 40%;height:170px;border:2px solid #ff388b75;transform:rotate(-10deg);border-radius:50%;pointer-events:none}.hero-copy h2{color:white;font-size:clamp(25px,3vw,42px);margin:0 0 10px;line-height:1.15}.hero-copy h2 b{color:#ff4765}.hero-copy p{margin:0;color:#cdd8ed;font-size:clamp(13px,1.5vw,19px)}.hero-art{font-size:clamp(55px,6vw,96px);letter-spacing:-20px;padding-right:25px;text-shadow:0 7px 26px #d52ca5aa;z-index:1}
-.container .tabs{margin:10px 0 18px!important}.container h1{font-size:clamp(24px,2.5vw,32px);margin:13px 0 20px}.container .tab-btn{border-radius:10px;padding:11px 17px}.container .normal-top-row{margin-top:0}.container .main-input-zone{max-width:none}.container .input-row input[type="text"],.container .input-row input{max-width:75%;width:530px}.container .buttons button{padding:12px 22px;border-radius:10px}.container .result-box{min-height:170px;border:1px solid #e2eaf5;border-radius:13px;background:#f5f9ff;padding:15px;margin-top:22px;display:block}.container .result-inner{max-width:100%}.container .result-box:empty:before{content:"📋  ผลลัพธ์จะแสดงที่นี่ — กรอกตัวเลขแล้วกด วินเลข";color:#8191a9;display:block;text-align:center;padding:53px 10px;font-size:15px}.container .page:not(.active){display:none}
-.member-panel{background:#fff;color:#182b43;border:1px solid #dbe7f5;border-radius:19px;padding:17px;align-self:start;box-shadow:0 12px 45px #0003}.member-header{display:flex;align-items:center;gap:12px;padding:3px 0 16px;text-align:left}.member-header .avatar{height:57px;width:57px;font-size:27px;flex-shrink:0}.member-header strong{display:block;font-size:16px;overflow-wrap:anywhere}.member-header small{display:block;color:#8091a6;margin-top:5px}.member-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:11px}.stat-tile{border:1px solid #e2e9f3;border-radius:11px;padding:12px 8px;font-size:11px;text-align:center;color:#65778d}.stat-tile b{display:block;color:#0c223b;margin-top:7px;font-size:13px}.stat-tile b.unlinked{font-size:11px;color:#64748b}.member-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.member-actions button{margin:0;min-height:58px;padding:10px 6px;color:#fff;border-radius:10px;font-size:14px;box-shadow:none}.member-actions .fund{background:#05a54c}.member-actions .rent{background:#8c36de}.member-actions .renew{background:#0875ee}.member-actions .points{background:#f58c08}.member-note{font-size:11px;color:#64748b;line-height:1.5;margin:14px 0 0;text-align:center}
-.floating-calc-box{top:112px!important;left:12px!important;display:flex;flex-direction:row-reverse;align-items:flex-start}.floating-calc-content{width:260px!important;padding:0!important;overflow:hidden;background:#fff!important;border:1px solid #ff688b!important;border-radius:16px!important;box-shadow:0 10px 35px #0007,0 0 13px #e8376570!important}.calc-head{background:linear-gradient(120deg,#9e164c,#172849);color:white;padding:12px 11px;font-weight:900;display:flex;justify-content:space-between;align-items:center}.calc-head button{font-size:22px;margin:0;background:transparent;color:#fff;padding:0 5px}.calc-body{padding:12px}.floating-calc-toggle{background:linear-gradient(150deg,#fb2d62,#ad1456)!important;box-shadow:0 4px 14px #0005!important;margin-top:65px!important;width:33px!important;min-height:65px!important;border-radius:0 10px 10px 0!important}.mini-calc-title{color:#dc2250}.mini-calc-formula{min-height:65px}.mini-copy-btn{background:#149a44}.floating-calc-box.calc-disabled{display:none!important}.floating-calc-box.closed .floating-calc-content{display:none!important}
-.calc-pad{background:#10233c;padding:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.calc-pad button{margin:0;padding:10px 0!important;background:#203c5e;color:white;border-radius:8px;font-size:15px}.calc-pad .key-danger{background:#f22f55}.calc-pad .key-equals{grid-column:span 4;background:#126cee;font-weight:900}.calc-pad button:focus-visible{outline:2px solid white;outline-offset:1px}
-@media(max-width:1150px){.site-workspace{grid-template-columns:minmax(0,1fr) 275px}.site-workspace.with-calc{padding-left:276px}.member-panel{padding:12px}.floating-calc-content{width:240px!important}}
-@media(max-width:900px){.site-workspace,.site-workspace.with-calc,.site-workspace.with-calc.is-calc-collapsed{padding:0 15px;grid-template-columns:1fr}.member-panel{max-width:none;grid-row:2}.hero-banner{height:135px}.floating-calc-box{top:auto!important;bottom:15px!important;left:8px!important;z-index:9998}.floating-calc-content{max-height:73vh;overflow:auto}.site-workspace.with-calc{padding-bottom:40px}}
-@media(max-width:550px){.topbar{padding:12px;gap:12px}.topbar-actions{gap:10px}.brand strong{font-size:18px}.brand small{font-size:10px}.hero-banner{height:118px;padding:14px}.hero-art{font-size:52px;letter-spacing:-13px;padding-right:14px}.container{padding:10px!important}.container .input-row input[type="text"],.container .input-row input{max-width:100%;width:100%}.member-stats{gap:7px}.site-workspace{margin-top:12px}.floating-calc-content{width:220px!important}.calc-head{font-size:12px}}
-
-</style>
+  </style>
 </head>
 
 
@@ -2333,20 +2314,10 @@ body::before{content:"";height:3px;position:fixed;top:0;left:0;right:0;backgroun
        MAIN PROGRAM
   ======================================== -->
 
-  <header class="topbar" id="mainTopbar">
-  <div class="brand"><div class="brand-orb">🎯</div><div><strong>โปรแกรม<em>วินเลข</em></strong><small>คำนวณเลข ง่าย รวดเร็ว แม่นยำ</small></div></div>
-  <div class="topbar-actions">
-    <label class="switch-wrap" title="เปิดหรือปิดเครื่องคิดเลขทั้งหมด">▦ เครื่องคิดเลข <input id="calculatorEnabled" type="checkbox" checked onchange="setCalculatorEnabled(this.checked)"><span class="switch-track"></span></label>
-    <span class="top-divider"></span><span title="แจ้งเตือน">🔔</span>
-    <div class="top-user"><span class="avatar">👤</span><div><strong class="top-user-name" id="headerUsername">สมาชิก</strong><div class="top-id" id="headerMemberId">บัญชีสมาชิก</div></div><span class="vip-chip" id="headerRole">สมาชิก</span></div>
-    <button class="header-logout" onclick="logoutUser()">⏻ ออกจากระบบ</button>
-  </div>
-</header>
-<div class="site-workspace with-calc" id="siteWorkspace">
-<div class="container">
+  <div class="container">
 
 
-    <div class="user-bar hidden">
+    <div class="user-bar">
 
       👤
 
@@ -2366,7 +2337,6 @@ body::before{content:"";height:3px;position:fixed;top:0;left:0;right:0;backgroun
     </div>
 
 
-    <div class="hero-banner"><div class="hero-copy"><h2>โปรแกรม<b>วินเลข</b></h2><p>คำนวณเลข ง่าย รวดเร็ว แม่นยำ</p></div><div class="hero-art" aria-hidden="true">🔴🟣🔵</div></div>
     <div class="tabs">
 
       <button
@@ -2593,13 +2563,6 @@ body::before{content:"";height:3px;position:fixed;top:0;left:0;right:0;backgroun
   </div>
 
 
-  <aside class="member-panel" aria-label="ข้อมูลสมาชิก">
-    <div class="member-header"><span class="avatar">👤</span><div><strong id="panelUsername">สมาชิก <span class="vip-chip" id="panelRole">สมาชิก</span></strong><small id="panelMemberId">ข้อมูลบัญชี</small></div></div>
-    <div class="member-stats"><div class="stat-tile">📅 วันหมดอายุ<b class="unlinked">ยังไม่เชื่อมระบบ</b></div><div class="stat-tile">🪙 พอยคงเหลือ<b class="unlinked">ยังไม่เชื่อมระบบ</b></div></div>
-    <div class="member-actions"><button class="fund" onclick="billingNotice('เติมเงิน')">▣ เติมเงิน</button><button class="rent" onclick="billingNotice('เช่าอายุ')">🛒 เช่าอายุ</button><button class="renew" onclick="billingNotice('ต่ออายุ')">⟳ ต่ออายุ</button><button class="points" onclick="billingNotice('เติมพอย')">🪙 เติมพอย</button></div>
-    <p class="member-note">ปุ่มบัญชีเป็นหน้าตาตัวอย่าง รอเชื่อมระบบชำระเงินและข้อมูลยอดจริง</p>
-  </aside>
-</div>
   <!-- ========================================
        ADMIN PANEL
   ======================================== -->
@@ -2966,24 +2929,54 @@ body::before{content:"";height:3px;position:fixed;top:0;left:0;right:0;backgroun
        MINI CALCULATOR
   ======================================== -->
 
-  <div class="floating-calc-box" id="floatingCalcBox">
-    <button class="floating-calc-toggle" aria-label="ย่อหรือขยายเครื่องคิดเลข" onclick="toggleFloatingCalc()">❮</button>
-    <div class="floating-calc-content">
-      <div class="calc-head"><span>▦ เครื่องคิดเลข</span><button title="ย่อเก็บ" aria-label="ย่อเก็บ" onclick="toggleFloatingCalc()">−</button></div>
-      <div class="calc-body"><div class="mini-calc-title">คำนวณเลข</div>
-        <input id="miniCalcInput" class="mini-calc-input" placeholder="เช่น 1+1 หรือ 1+1-2" inputmode="text">
-        <div id="miniCalcFormula" class="mini-calc-formula placeholder">กรอกเช่น 1+1 หรือ 1+1-2</div>
-        <button class="copy mini-copy-btn" onclick="copyMiniCalc()">▣ คัดลอก</button>
+  <div
+    class="floating-calc-box"
+    id="floatingCalcBox"
+  >
+
+    <button
+      class="floating-calc-toggle"
+      onclick="toggleFloatingCalc()"
+    >
+      🧮
+    </button>
+
+
+    <div
+      class="floating-calc-content"
+    >
+
+      <div class="mini-calc-title">
+        คำนวณเลข
       </div>
-      <div class="calc-pad" aria-label="แป้นเครื่องคิดเลข">
-        <button onclick="appendMiniCalc('7')">7</button><button onclick="appendMiniCalc('8')">8</button><button onclick="appendMiniCalc('9')">9</button><button class="key-danger" onclick="clearMiniCalc()">C</button>
-        <button onclick="appendMiniCalc('4')">4</button><button onclick="appendMiniCalc('5')">5</button><button onclick="appendMiniCalc('6')">6</button><button onclick="appendMiniCalc('+')">+</button>
-        <button onclick="appendMiniCalc('1')">1</button><button onclick="appendMiniCalc('2')">2</button><button onclick="appendMiniCalc('3')">3</button><button onclick="appendMiniCalc('-')">−</button>
-        <button onclick="appendMiniCalc('0')">0</button><button onclick="appendMiniCalc('00')">00</button><button onclick="backspaceMiniCalc()">⌫</button><button onclick="appendMiniCalc('+')">+</button>
-        <button class="key-equals" onclick="updateMiniCalc()">=</button>
+
+
+      <input
+        id="miniCalcInput"
+        class="mini-calc-input"
+        placeholder="เช่น 1+1 หรือ 1+1-2"
+      >
+
+
+      <div
+        id="miniCalcFormula"
+        class="mini-calc-formula placeholder"
+      >
+        กรอกเช่น 1+1 หรือ 1+1-2
       </div>
+
+
+      <button
+        class="copy mini-copy-btn"
+        onclick="copyMiniCalc()"
+      >
+        คัดลอก
+      </button>
+
     </div>
+
   </div>
+
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -6522,7 +6515,10 @@ body::before{content:"";height:3px;position:fixed;top:0;left:0;right:0;backgroun
     }
 
 
-    // Rain animation disabled in redesigned UI (lower CPU usage).
+    setInterval(
+      createRain,
+      80
+    );
 
 
     /* ========================================
@@ -6576,37 +6572,6 @@ body::before{content:"";height:3px;position:fixed;top:0;left:0;right:0;backgroun
     renderPresetSets();
 
     checkLogin();
-
-
-/* ===== UI v2 behavioral layer ===== */
-function setCalculatorEnabled(enabled){
-  const box=document.getElementById('floatingCalcBox');
-  const layout=document.getElementById('siteWorkspace');
-  document.getElementById('calculatorEnabled').checked=!!enabled;
-  box.classList.toggle('calc-disabled',!enabled);
-  layout.classList.toggle('with-calc',!!enabled);
-  if(!enabled) layout.classList.remove('is-calc-collapsed');
-  try{localStorage.setItem('winCalculatorEnabled',enabled?'1':'0')}catch(e){}
-}
-function appendMiniCalc(s){const el=document.getElementById('miniCalcInput');el.value+=s;updateMiniCalc();el.focus()}
-function clearMiniCalc(){document.getElementById('miniCalcInput').value='';updateMiniCalc()}
-function backspaceMiniCalc(){const el=document.getElementById('miniCalcInput');el.value=el.value.slice(0,-1);updateMiniCalc()}
-function billingNotice(action){alert('ระบบ '+action+' ยังไม่ได้เชื่อมต่อบริการชำระเงิน กรุณาตั้งค่า Backend และฐานข้อมูลก่อนเปิดใช้จริง')}
-function syncMemberUI(){
- const profile=typeof currentProfile!=='undefined'?currentProfile:null;
- const username=profile?.username||document.getElementById('currentUsername')?.textContent||'สมาชิก';
- ['headerUsername','panelUsername'].forEach(id=>{const el=document.getElementById(id);if(!el)return;if(id==='panelUsername'){el.firstChild.textContent=username+' '}else el.textContent=username});
- const userId=profile?.id?String(profile.id).slice(0,8):'—';
- document.getElementById('headerMemberId').textContent='ID: '+userId;
- document.getElementById('panelMemberId').textContent='ID: '+userId;
- const role=profile?.role==='admin'?'ADMIN':'สมาชิก';
- ['headerRole','panelRole'].forEach(id=>document.getElementById(id).textContent=role);
-}
-const __originalToggleFloatingCalc=toggleFloatingCalc;
-toggleFloatingCalc=function(){__originalToggleFloatingCalc();document.getElementById('siteWorkspace').classList.toggle('is-calc-collapsed',document.getElementById('floatingCalcBox').classList.contains('closed'))};
-const __originalEnterProgram=enterProgram;
-enterProgram=function(username){__originalEnterProgram(username);syncMemberUI()};
-try{setCalculatorEnabled(localStorage.getItem('winCalculatorEnabled')!=='0')}catch(e){setCalculatorEnabled(true)}
 
   </script>
 
