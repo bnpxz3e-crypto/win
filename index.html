@@ -3110,6 +3110,12 @@ body > #settingsDropdown.account-dropdown::before{left:18px!important;right:auto
 .avatar-zoom-row{display:flex;align-items:center;gap:12px;margin:12px auto 16px;max-width:300px}.avatar-zoom-row input{flex:1;min-width:0;accent-color:#13d18f;cursor:pointer}
 .avatar-crop-actions{display:flex;gap:10px;justify-content:center}.avatar-crop-actions button{margin:0;flex:1;border-radius:9px;padding:10px 12px}.avatar-crop-save{background:#08ab60;color:#fff}.avatar-crop-cancel{background:#284461;color:#fff}
 </style>
+<style id="admin-button-visibility-fix-v40">
+/* Role-gated menu: override visual tab display rules when hidden. */
+.container #adminManageBtn.hidden,
+.container .tabs #adminManageBtn.hidden,
+#adminManageBtn.hidden { display: none !important; }
+</style>
 </head>
 <body>
 <!-- ========================================
